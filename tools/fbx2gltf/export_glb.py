@@ -3,7 +3,7 @@
 with embedded PNGs - for modern web auto-riggers (Cinevva, Mesh2Motion, etc.)
 Usage: export_glb.py <obj_path> <out_glb>
 """
-import json, os, struct, sys
+import json, os, struct, subprocess, sys
 
 def main():
     objp, outp = sys.argv[1], sys.argv[2]
@@ -15,15 +15,19 @@ def main():
         if not t: continue
         if t[0] == 'newmtl': mtl_order.append(t[1])
         elif t[0] == 'map_Kd': mtl_tex[mtl_order[-1]] = t[1]
+    mtl_order = [m for m in mtl_order if m != 'Cheek_mt']
     for line in open(objp):
         t = line.split()
         if not t: continue
         if t[0] == 'v': V += [float(x) for x in t[1:4]]
-        elif t[0] == 'vt': VT += [float(t[1]), float(t[2])]
+        elif t[0] == 'vt': VT += [float(t[1]), 1.0 - float(t[2])]  # OBJ bottom-left -> glTF top-left
         elif t[0] == 'vn': VN += [float(x) for x in t[1:4]]
         elif t[0] == 'usemtl':
-            cur = t[1]; groups.append([cur, []])
+            cur = t[1]
+            if cur == 'Cheek_mt': cur = None  # blush overlay dibuang: viewer tanpa BLEND render dia opaque (creepy mask)
+            if cur is not None: groups.append([cur, []])
         elif t[0] == 'f':
+            if cur is None: continue
             ids = [int(x.split('/')[0]) - 1 for x in t[1:4]]
             groups[-1][1] += ids
     binb = bytearray()
@@ -49,7 +53,11 @@ def main():
     def get_tex(m):
         if m not in tex_idx:
             p = os.path.join(base, mtl_tex[m])
-            raw = open(p, 'rb').read()
+            if m in ('HairA_mt', 'HairB_mt'):
+                raw = open(p, 'rb').read()  # rambut butuh alpha (MASK)
+            else:
+                # opaque: flatten alpha ke putih biar viewer mana pun bebas lubang hitam
+                raw = subprocess.run(['convert', p, '-background', 'white', '-alpha', 'remove', '-alpha', 'off', 'png:-'], capture_output=True, check=True).stdout
             i = bv(raw, 0)
             buffer_views[-1].pop('target')
             images.append({'bufferView': i, 'mimeType': 'image/png'})
