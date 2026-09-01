@@ -89,3 +89,22 @@ Urutan coba di Cinevva: (1) shibahu_rigged.glb, (2) shibahu.glb, (3) Mesh2Motion
    skeleton/ground/cheek/outline. Juga 0 error/warning/hint.
 3. Ketiga GLB kini lolos `npx @gltf-transform/cli validate`.
 Urutan coba: rigged → m2m (Mesh2Motion) → shibahu.glb.
+
+## v8 — SATUAN METER + paket khusus Mesh2Motion (semua laporan user dijawab)
+
+1. SEMUA export kini dalam METER (tinggi 1,575 m). Sebelumnya masih sentimeter
+   (157,5 unit) — itu penyebab "raksasa" di Cinevva/M2M dan kamera nembus badan
+   (near-plane). Mesh2Motion halaman retarget terbukti dari source code-nya
+   TIDAK auto-scale model ber-skin.
+2. `shibahu_m2m.glb` (polos/putih 1x1, tampil merah di Cinevva) DIGANTI
+   `shibahu_m2m.zip` = shibahu.gltf + shibahu.bin + 6 tekstur — jalur ZIP-GLTF
+   Mesh2Motion (loader zip mereka HANYA baca .gltf/.dae; zip OBJ lama memang
+   tidak akan pernah muncul di sana).
+3. Cara pakai Mesh2Motion (dari source code repo mereka):
+   - halaman CREATE (auto-rig): upload `shibahu_m2m.zip`
+   - halaman RETARGET (animasi ke rig yang sudah ada): upload
+     `shibahu_rigged.glb` (butuh SkinnedMesh — mesh polos ditolak
+     "No SkinnedMesh found")
+4. Verifikasi: ketiga artefak lolos `gltf-transform validate` (0/0/0), rigged
+   20 bone di scene, Hips rest 1,041 m, 14.545 seam-dup → 0 beda weights,
+   render round-trip OK.

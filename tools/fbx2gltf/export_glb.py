@@ -30,6 +30,8 @@ def main():
             if cur is None: continue
             ids = [int(x.split('/')[0]) - 1 for x in t[1:4]]
             groups[-1][1] += ids
+    # cm -> meter (glTF standar); tanpa ini model raksasa di viewer non-auto-fit
+    V = [c * 0.01 for c in V]
     binb = bytearray()
     buffer_views = []; accessors = []
     def bv(data, target):

@@ -165,6 +165,11 @@ def main():
         c = bonecen[b]
         rest[b] = (c[0] / c[3], c[1] / c[3], c[2] / c[3]) if c[3] > 0 else (0, 0, 0)
     rest['Hips'] = (0.0, rest['Hips'][1], rest['Hips'][2])
+    # satuan sumber = cm; glTF standar = meter. Tanpa ini model jadi raksasa
+    # 157 m di viewer yg tidak auto-fit (M2M retarget tidak auto-scale!)
+    SCALE = 0.01
+    V = [(x * SCALE, y * SCALE, z * SCALE) for (x, y, z) in V]
+    rest = {b: (p[0] * SCALE, p[1] * SCALE, p[2] * SCALE) for b, p in rest.items()}
     print('verts', len(V), 'tris', sum(len(t) // 3 for _, t in groups), 'bones', len(SIMPLE))
 
     # ---- GLB packing ----
