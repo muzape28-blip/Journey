@@ -1,31 +1,41 @@
-# EXPORT — Shibahu untuk Mixamo (v2, Mixamo-optimized)
+# EXPORT — Shibahu untuk Mixamo (v3)
 
-File hasil pipeline `tools/fbx2gltf` (dari `ASSETS/shibahu.zip`), diekspor dalam kondisi yang disukai auto-rigger Mixamo:
+Karakter **lengkap seperti semula** (ekor + blush ikut), **T-pose**, satu mesh gabungan,
+TANPA skeleton, cm, tinggi ≈ 157, menghadap +Z.
+Yang tetap dibuang: ground plane 2,5 m (`lambert2`, artefak floor dari source — bukan bagian karakter)
+dan outline shell (`*_line`, permukaan dobel yang tak terlihat tanpa shader toon).
 
-- **T-pose** (lengan horizontal, di-rotate lewat skin weight, halus di bahu)
-- **SATU mesh gabungan, TANPA skeleton**, satuan cm, tinggi ≈ 157, menghadap +Z
-- **Dibuang** (karena pemblokir auto-rigger menurut Mixamo FAQ):
-  - ground plane 2,5 m (`lambert2`) — tak terlihat di render depan tapi fatal buat solver
-  - overlay blush melayang (`Cheek_mt`) — "floating parts" ditolak auto-rigger
-  - ekor (`Shibahu_Tail1..7`) — "large extra appendages" ditolak auto-rigger
-  - outline shell (`*_line`) — permukaan dobel
-- 61.997 vertex / 71.988 tris, 6 material bertekstur
+## File
 
 | File | Isi |
 |---|---|
-| `shibahu.fbx` | FBX ASCII 7.4: mesh + UV + normal + material + ref tekstur |
-| `shibahu.obj` + `shibahu.mtl` | OBJ standar + material (`map_Kd`, `map_d` untuk rambut) |
-| `textures/` | 6 tekstur 2K yang dipakai material |
+| **`shibahu_mixamo.zip`** | ⬆️ **UPLOAD INI KE MIXAMO** — berisi `shibahu.obj` + `shibahu.mtl` (ref tekstur flat) + 7 tekstur PNG di root zip |
+| `shibahu_lite_mixamo.zip` | Fallback bila auto-rigger menolak ekor: varian tanpa ekor/blush, struktur zip sama |
+| `shibahu.obj` / `shibahu.mtl` / `shibahu.fbx` | Varian FULL (ekor+blush) longgar, buat DCC/engine |
+| `shibahu_lite.obj` / `shibahu_lite.mtl` | Varian lite longgar |
+| `textures/` | 7 tekstur 2K |
 
-**Cara pakai di Mixamo (HP maupun desktop):**
-1. Upload `shibahu.fbx` (atau zip `shibahu.obj` + `shibahu.mtl` + `textures/`).
-2. Di Auto-Rigger, **seret semua marker** ke karakter: CHIN (dagu), WRISTS (pergelangan), ELBOWS (siku), KNEES (lutut), GROIN (selangkangan). Centang *Use Symmetry* supaya kiri-kanan cermin. Marker wajib ditempel sebelum NEXT — kalau tidak muncul "Oops! Please place all markers".
-3. Skeleton LOD: Standard (65). NEXT → tunggu rig → pilih animasi → download FBX.
-4. Kalau skala terasa aneh, ingat sumbernya cm (tinggi ≈ 157).
+## Kenapa harus ZIP, bukan .obj polos
 
-**Yang sengaja tidak ada di varian ini:** ekor, blush overlay, dan outline.
-Untuk game, pasang lagi ekor/cheek dari hasil pipeline glTF (`tools/fbx2gltf/fbx2gltf.py` + `ASSETS/shibahu.zip`) setelah rig Mixamo jadi — atau pakai secondary motion (spring bone) di engine.
+Menurut dokumentasi resmi Mixamo: *"OBJ files don't include textures, making characters
+appear gray. To show textures for an .obj file, put the .obj, .mtl and textures into a .zip
+and upload the whole .zip file."* [helpx.adobe.com](https://helpx.adobe.com/creative-cloud/help/mixamo-rigging-animation.html)
+Itu sebabnya upload `.obj` sendirian kemarin tampil abu-abu silver.
 
-Bukti file valid: `RENDERS/obj_file_verify.png` = render yang dibuat LANGSUNG dari `shibahu.obj` ini (T-pose terlihat di situ).
+## Langkah di Mixamo
 
-Riwayat: v1 (commit 39d5cdf) masih memuat ground plane/cheek/ekor dan memicu "Unknown error while generating motion" di Mixamo. v2 = isi folder ini sekarang.
+1. Upload `shibahu_mixamo.zip`.
+2. Auto-Rigger: seret marker CHIN/WRISTS/ELBOWS/KNEES/GROIN ke tubuh (Use Symmetry on), NEXT.
+3. Skeleton LOD Standard (65) → rig → pilih animasi → download.
+4. Bila muncul error rig karena ekor → upload `shibahu_lite_mixamo.zip` sebagai plan B
+   (ekor/blush dipasang lagi nanti di engine dari pipeline glTF repo ini).
+
+Catatan: hasil DOWNLOAD dari Mixamo memang datang tanpa tekstur ter-link di beberapa DCC —
+re-link PNG dari folder `textures/` di Blender/engine (normal, bukan bug file ini).
+
+Bukti valid: `RENDERS/obj_file_verify.png` (depan) & `RENDERS/obj_file_verify_back.png`
+(belakang, ekor kelihatan) — keduanya dirender LANGSUNG dari isi `shibahu_mixamo.zip`.
+
+Riwayat: v1 (39d5cdf) memuat ground plane/cheek/ekor + A-pose → "Unknown error".
+v2 (859f4bc) T-pose tapi ekor/blush dibuang → rig OK tapi user minta look lengkap.
+v3 = folder ini sekarang.

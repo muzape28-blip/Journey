@@ -49,11 +49,3 @@ d 1
 illum 1
 map_Kd textures/Shibahu_face_dif.png
 
-newmtl Cheek_mt
-Kd 1 1 1
-Ka 0 0 0
-Ks 0 0 0
-d 1
-illum 1
-map_Kd textures/cheek_albedo_a.png
-
