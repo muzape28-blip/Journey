@@ -1,41 +1,46 @@
-# EXPORT — Shibahu untuk Mixamo (v3)
+# EXPORT — Shibahu untuk Mixamo (v4: satu file bertekstur)
 
-Karakter **lengkap seperti semula** (ekor + blush ikut), **T-pose**, satu mesh gabungan,
-TANPA skeleton, cm, tinggi ≈ 157, menghadap +Z.
-Yang tetap dibuang: ground plane 2,5 m (`lambert2`, artefak floor dari source — bukan bagian karakter)
-dan outline shell (`*_line`, permukaan dobel yang tak terlihat tanpa shader toon).
+Karakter **lengkap** (ekor + blush), **T-pose**, satu mesh, TANPA skeleton, cm, tinggi ≈ 157, menghadap +Z.
+Dibuang: ground plane 2,5 m (artefak floor source) & outline shell (tak terlihat tanpa shader toon).
 
-## File
+## ⬆️ UPLOAD INI: `shibahu_mixamo.fbx` — SATU FILE, tekstur EMBEDDED
+
+Binary FBX 7.4 (= FBX SDK 2014, batas yang dibaca Mixamo) dengan 7 tekstur PNG
+tertanam di dalamnya (Video node `Content`). Tidak perlu zip, tidak perlu file pendamping.
+Plan B bila ekor ditolak auto-rigger: `shibahu_lite_mixamo.fbx` (tanpa ekor/blush).
+
+Kenapa bukan OBJ tunggal? Spesifikasi OBJ **tidak punya fitur embed** — .obj selalu
+menunjuk .mtl & tekstur eksternal. Wadah "satu file" yang benar = FBX embed media
+(dok resmi Mixamo: "Make sure embed media is turned on for FBX files to upload your
+textures — OBJ files don't include textures, making characters appear gray"
+[helpx.adobe.com](https://helpx.adobe.com/creative-cloud/help/mixamo-rigging-animation.html)).
+
+Kenapa zip riskan? Pesan error Mixamo untuk zip: "The ZIP contains an unsupported File
+type. Please use FBX or OBJ Formats" — sesuai pengalaman user: isi zip selain obj/fbx
+bisa ditolak. Maka zip di sini hanya fallback: `shibahu_mixamo.zip` / `shibahu_lite_mixamo.zip`.
+
+## Isi folder
 
 | File | Isi |
 |---|---|
-| **`shibahu_mixamo.zip`** | ⬆️ **UPLOAD INI KE MIXAMO** — berisi `shibahu.obj` + `shibahu.mtl` (ref tekstur flat) + 7 tekstur PNG di root zip |
-| `shibahu_lite_mixamo.zip` | Fallback bila auto-rigger menolak ekor: varian tanpa ekor/blush, struktur zip sama |
-| `shibahu.obj` / `shibahu.mtl` / `shibahu.fbx` | Varian FULL (ekor+blush) longgar, buat DCC/engine |
-| `shibahu_lite.obj` / `shibahu_lite.mtl` | Varian lite longgar |
+| **`shibahu_mixamo.fbx`** (24,4 MB) | SATU FILE: mesh+UV+normal+material+7 tekstur embedded |
+| `shibahu_lite_mixamo.fbx` | Varian tanpa ekor/blush, embedded juga |
+| `shibahu_mixamo.zip` / `shibahu_lite_mixamo.zip` | Fallback obj+mtl+png |
+| `shibahu.obj`/`.mtl`/`.fbx`(ascii) & `shibahu_lite.*` | File longgar untuk DCC/engine |
 | `textures/` | 7 tekstur 2K |
 
-## Kenapa harus ZIP, bukan .obj polos
-
-Menurut dokumentasi resmi Mixamo: *"OBJ files don't include textures, making characters
-appear gray. To show textures for an .obj file, put the .obj, .mtl and textures into a .zip
-and upload the whole .zip file."* [helpx.adobe.com](https://helpx.adobe.com/creative-cloud/help/mixamo-rigging-animation.html)
-Itu sebabnya upload `.obj` sendirian kemarin tampil abu-abu silver.
-
 ## Langkah di Mixamo
+1. Upload `shibahu_mixamo.fbx`.
+2. Auto-Rigger: seret marker CHIN/WRISTS/ELBOWS/KNEES/GROIN, Use Symmetry on, NEXT.
+3. Skeleton LOD Standard (65) → rig → animasi → download.
+4. Hasil download Mixamo di beberapa DCC tetap perlu re-link tekstur dari `textures/` (normal).
 
-1. Upload `shibahu_mixamo.zip`.
-2. Auto-Rigger: seret marker CHIN/WRISTS/ELBOWS/KNEES/GROIN ke tubuh (Use Symmetry on), NEXT.
-3. Skeleton LOD Standard (65) → rig → pilih animasi → download.
-4. Bila muncul error rig karena ekor → upload `shibahu_lite_mixamo.zip` sebagai plan B
-   (ekor/blush dipasang lagi nanti di engine dari pipeline glTF repo ini).
+## Verifikasi (jujur)
+- `RENDERS/fbx_embedded_verify.png` = render yang dibuat dengan **membaca balik** binary
+  FBX ini (parser binary independen di `tools/fbx2gltf/obj2fbx_embedded.py verify`) —
+  geometri + 7 tekstur embedded terbaca utuh.
+- Uji akhir tetap di Mixamo (sandbox tak bisa login). Bila muncul "Unsupported FBX type",
+  kabari — itu artinya soal versi/format, dan fallback zip/obj masih tersedia.
 
-Catatan: hasil DOWNLOAD dari Mixamo memang datang tanpa tekstur ter-link di beberapa DCC —
-re-link PNG dari folder `textures/` di Blender/engine (normal, bukan bug file ini).
-
-Bukti valid: `RENDERS/obj_file_verify.png` (depan) & `RENDERS/obj_file_verify_back.png`
-(belakang, ekor kelihatan) — keduanya dirender LANGSUNG dari isi `shibahu_mixamo.zip`.
-
-Riwayat: v1 (39d5cdf) memuat ground plane/cheek/ekor + A-pose → "Unknown error".
-v2 (859f4bc) T-pose tapi ekor/blush dibuang → rig OK tapi user minta look lengkap.
-v3 = folder ini sekarang.
+Riwayat: v1 ground plane+A-pose → error rig. v2 lite → rig OK, look kurang.
+v3 zip ber-tekstur → user: zip selain obj/fbx ditolak. v4 = satu FBX embedded ini.
