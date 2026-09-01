@@ -1,0 +1,66 @@
+# Shibahu materials
+newmtl CosA_mt
+Kd 1 1 1
+Ka 0 0 0
+Ks 0 0 0
+d 1
+illum 1
+map_Kd textures/Shibahu_cosA_dif.png
+
+newmtl CosB_mt
+Kd 1 1 1
+Ka 0 0 0
+Ks 0 0 0
+d 1
+illum 1
+map_Kd textures/Shibahu_cosB_dif.png
+
+newmtl Body_mt
+Kd 1 1 1
+Ka 0 0 0
+Ks 0 0 0
+d 1
+illum 1
+map_Kd textures/Shibahu_body_dif.png
+
+newmtl HairA_mt
+Kd 1 1 1
+Ka 0 0 0
+Ks 0 0 0
+d 1
+illum 1
+map_Kd textures/hairA_albedo_a.png
+map_d textures/hairA_albedo_a.png
+
+newmtl HairB_mt
+Kd 1 1 1
+Ka 0 0 0
+Ks 0 0 0
+d 1
+illum 1
+map_Kd textures/hairB_albedo_a.png
+map_d textures/hairB_albedo_a.png
+
+newmtl Face_mt
+Kd 1 1 1
+Ka 0 0 0
+Ks 0 0 0
+d 1
+illum 1
+map_Kd textures/Shibahu_face_dif.png
+
+newmtl Cheek_mt
+Kd 1 1 1
+Ka 0 0 0
+Ks 0 0 0
+d 1
+illum 1
+map_Kd textures/cheek_albedo_a.png
+
+newmtl lambert2
+Kd 1 1 1
+Ka 0 0 0
+Ks 0 0 0
+d 1
+illum 1
+
