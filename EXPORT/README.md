@@ -128,3 +128,17 @@ Artefak & konvensi UV:
   → untuk halaman RETARGET Mesh2Motion
 Render ekspektasi: RENDERS/rigged_spec_expect.png (viewer standar),
 RENDERS/rigged_m2m_on_m2m_expect.png & m2mzip_on_m2m_expect.png (emulasi flip M2M).
+
+## v10 — FINAL: semua file UV glTF STANDAR (teori "M2M mem-flip UV" TERNYATA SALAH)
+
+Screenshot user membuktikan M2M & Prisma3D sama-sama pembaca glTF standar.
+Kesalahan v9: varian 'uvobj' justru memproduksi file mirrored. Flag uvobj DIHAPUS.
+Perbaikan v10:
+- shibahu_rigged_m2m.glb: UV standar + tekstur 1K (8,9 MB) — tampil benar di
+  M2M/Prisma3D/Cinevva/viewer standar mana pun.
+- shibahu_m2m.zip DIBETULKAN (v9 menulis biner GLB ke dalam file bernama .gltf →
+  error "is not valid JSON" di M2M; juga zip lama menyisakan entry basi):
+  kini .gltf JSON asli + .bin + tekstur 1K data-URI, total 5,5 MB.
+- shibahu.glb & shibahu_rigged.glb: UV standar, tekstur 2K.
+Verifikasi visual (dilihat langsung, bukan cuma exit code):
+RENDERS/final_verify_rigged.png & final_verify_rigged_m2m.png = kawaii benar.

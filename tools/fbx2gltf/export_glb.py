@@ -11,7 +11,6 @@ def main():
     # yang terbukti mem-flip UV), 'gltf' = tulis .gltf+.bin (bukan .glb),
     # 'datauri' = tekstur sebagai data: URI di JSON (loader zip lama M2M)
     ARGS = set(sys.argv[3:])
-    UV_FLIP = 'uvobj' not in ARGS
     FMT = 'gltf' if 'gltf' in ARGS else 'glb'
     DATAURI = 'datauri' in ARGS
     TEX1K = 'tex1k' in ARGS
@@ -28,7 +27,7 @@ def main():
         t = line.split()
         if not t: continue
         if t[0] == 'v': V += [float(x) for x in t[1:4]]
-        elif t[0] == 'vt': VT += [float(t[1]), (1.0 - float(t[2])) if UV_FLIP else float(t[2])]
+        elif t[0] == 'vt': VT += [float(t[1]), 1.0 - float(t[2])]  # OBJ bottom-left -> glTF top-left
         elif t[0] == 'vn': VN += [float(x) for x in t[1:4]]
         elif t[0] == 'usemtl':
             cur = t[1]
@@ -105,13 +104,24 @@ def main():
         'scenes': [{'nodes': [0]}], 'scene': 0,
     }
     jb = json.dumps(gltf, separators=(',', ':')).encode()
-    jb_pad = (4 - len(jb) % 4) % 4; jb += b' ' * jb_pad
-    bb = bytes(binb); bb_pad = (4 - len(bb) % 4) % 4; bb += b'\x00' * bb_pad
-    total = 12 + 8 + len(jb) + 8 + len(bb)
-    with open(outp, 'wb') as f:
-        f.write(struct.pack('<III', 0x46546C67, 2, total))
-        f.write(struct.pack('<II', len(jb), 0x4E4F534A)); f.write(jb)
-        f.write(struct.pack('<II', len(bb), 0x004E4942)); f.write(bb)
-    print('glb written:', outp, '%.1f MB' % (total / 1e6))
+    if FMT == 'glb':
+        jb_pad = (4 - len(jb) % 4) % 4; jb += b' ' * jb_pad
+        bb = bytes(binb); bb_pad = (4 - len(bb) % 4) % 4; bb += b'\x00' * bb_pad
+        total = 12 + 8 + len(jb) + 8 + len(bb)
+        with open(outp, 'wb') as f:
+            f.write(struct.pack('<III', 0x46546C67, 2, total))
+            f.write(struct.pack('<II', len(jb), 0x4E4F534A)); f.write(jb)
+            f.write(struct.pack('<II', len(bb), 0x4E4942)); f.write(bb)
+        print('glb written:', outp, '%.1f MB' % (total / 1e6))
+    else:
+        import os as _os
+        outdir = _os.path.dirname(outp) or '.'
+        binname = _os.path.basename(outp).rsplit('.', 1)[0] + '.bin'
+        gltf['buffers'] = [{'uri': binname, 'byteLength': len(binb)}]
+        with open(_os.path.join(outdir, binname), 'wb') as f:
+            f.write(bytes(binb))
+        with open(outp, 'w') as f:
+            f.write(json.dumps(gltf))
+        print('gltf written:', outp, '%.1f MB' % (len(binb) / 1e6))
 
 main()

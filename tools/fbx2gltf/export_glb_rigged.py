@@ -10,7 +10,6 @@ import json, os, sys, math, struct, subprocess, array
 def main():
     d, outp = sys.argv[1], sys.argv[2]
     ARGS = set(sys.argv[3:])
-    UV_OBJ = 'uvobj' in ARGS   # preview gltf UV sudah glTF-konvensi; spec=biarkan, m2M=flip lagi
     TEX1K = 'tex1k' in ARGS
     g = json.load(open(os.path.join(d, 'shibahu.gltf'))); binb = open(os.path.join(d, 'shibahu.bin'), 'rb').read()
     def acc(i):
@@ -133,7 +132,7 @@ def main():
                 jj = [0] * 4; ww = [0.0] * 4
                 for k2, (b, w) in enumerate(top): jj[k2] = bidx[b]; ww[k2] = w / tw
                 J4 += jj; W4 += ww
-                V.append((X, Y, Z)); N.append((NX, NY, NZ)); U.append((uv[vi * 2], (1.0 - uv[vi * 2 + 1]) if UV_OBJ else uv[vi * 2 + 1]))
+                V.append((X, Y, Z)); N.append((NX, NY, NZ)); U.append((uv[vi * 2], uv[vi * 2 + 1]))  # preview gltf sudah glTF-konvensi: jangan flip lagi
             kept = [base + idx[t] for t in range(len(idx))]
             groups.append((mname, kept))
             t = mat.get('pbrMetallicRoughness', {}).get('baseColorTexture')
