@@ -7,6 +7,14 @@ import json, os, struct, subprocess, sys
 
 def main():
     objp, outp = sys.argv[1], sys.argv[2]
+    # arg opsional: 'uvobj' = biarkan V apa adanya (konvensi OBJ, utk loader M2M
+    # yang terbukti mem-flip UV), 'gltf' = tulis .gltf+.bin (bukan .glb),
+    # 'datauri' = tekstur sebagai data: URI di JSON (loader zip lama M2M)
+    ARGS = set(sys.argv[3:])
+    UV_FLIP = 'uvobj' not in ARGS
+    FMT = 'gltf' if 'gltf' in ARGS else 'glb'
+    DATAURI = 'datauri' in ARGS
+    TEX1K = 'tex1k' in ARGS
     base = os.path.dirname(objp) or '.'
     V = []; VT = []; VN = []; groups = []; cur = None
     mtl_order = []; mtl_tex = {}
@@ -20,7 +28,7 @@ def main():
         t = line.split()
         if not t: continue
         if t[0] == 'v': V += [float(x) for x in t[1:4]]
-        elif t[0] == 'vt': VT += [float(t[1]), 1.0 - float(t[2])]  # OBJ bottom-left -> glTF top-left
+        elif t[0] == 'vt': VT += [float(t[1]), (1.0 - float(t[2])) if UV_FLIP else float(t[2])]
         elif t[0] == 'vn': VN += [float(x) for x in t[1:4]]
         elif t[0] == 'usemtl':
             cur = t[1]
@@ -60,9 +68,15 @@ def main():
             else:
                 # opaque: flatten alpha ke putih biar viewer mana pun bebas lubang hitam
                 raw = subprocess.run(['convert', p, '-background', 'white', '-alpha', 'remove', '-alpha', 'off', 'png:-'], capture_output=True, check=True).stdout
-            i = bv(raw, 0)
-            buffer_views[-1].pop('target')
-            images.append({'bufferView': i, 'mimeType': 'image/png'})
+            if TEX1K:
+                raw = subprocess.run(['convert', 'png:-', '-resize', '50%', 'png:-'], input=raw, capture_output=True, check=True).stdout
+            if DATAURI:
+                import base64 as _b64
+                images.append({'uri': 'data:image/png;base64,' + _b64.b64encode(raw).decode(), 'mimeType': 'image/png'})
+            else:
+                i = bv(raw, 0)
+                buffer_views[-1].pop('target')
+                images.append({'bufferView': i, 'mimeType': 'image/png'})
             textures.append({'sampler': 0, 'source': len(images) - 1})
             tex_idx[m] = len(textures) - 1
         return tex_idx[m]

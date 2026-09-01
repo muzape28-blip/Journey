@@ -108,3 +108,23 @@ Urutan coba: rigged → m2m (Mesh2Motion) → shibahu.glb.
 4. Verifikasi: ketiga artefak lolos `gltf-transform validate` (0/0/0), rigged
    20 bone di scene, Hips rest 1,041 m, 14.545 seam-dup → 0 beda weights,
    render round-trip OK.
+
+## v9 — FIX UV + paket khusus Mesh2Motion (jawaban screenshot user)
+
+Diagnosa terbukti: render software kita dengan UV di-flip menghasilkan tampilan
+PERSIS seperti screenshot user di M2M (top hitam, thigh-high gelap, sepatu biru,
+"mask" merah) → loader M2M yang ter-deploy membaca UV dengan konvensi OBJ
+(mem-flip V), berlawanan dengan viewer glTF standar (Cinevva dll).
+Selain itu ketemu bug lama: export_glb_rigged mem-flip UV dua kali (fbx2gltf
+sudah menyimpan UV glTF-konvensi) — GLB rigged v6-v8 ternyata mirrored di
+viewer standar; kini diperbaiki.
+
+Artefak & konvensi UV:
+- `shibahu.glb`, `shibahu_rigged.glb` : UV glTF standar (Cinevva, engine, three.js)
+- `shibahu_m2m.zip` (19MB): .gltf + .bin, UV konvensi OBJ + tekstur 1K sebagai
+  data-URI (loader zip lama M2M tidak memuat tekstur file → dulu biru polos)
+  → untuk halaman CREATE Mesh2Motion
+- `shibahu_rigged_m2m.glb` (8,9MB): rigged 20 bone, UV OBJ + tekstur 1K
+  → untuk halaman RETARGET Mesh2Motion
+Render ekspektasi: RENDERS/rigged_spec_expect.png (viewer standar),
+RENDERS/rigged_m2m_on_m2m_expect.png & m2mzip_on_m2m_expect.png (emulasi flip M2M).
