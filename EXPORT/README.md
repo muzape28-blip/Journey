@@ -50,3 +50,19 @@ dengan FBX sumber yang valid).
 Riwayat: v1 ground plane+A-pose → "Unknown error". v2 lite T-pose → rig OK, look kurang.
 v3 zip ber-tekstur → user lapor zip asli dulu ditolak "unsupported file". v4 satu FBX embedded
 tapi header rusak → "Unexpected File Type". v5 = folder ini sekarang.
+
+## v5 — jalur alternatif selain Mixamo (hasil riset 2026-09-01)
+
+Mixamo terbukti tidak stabil (outage massal Juni 2025, maintenance mode, error upload
+"trouble receiving your upload" di banyak user). Alternatif GRATIS yang lebih worth it:
+
+| Tool | Platform | Catatan |
+|---|---|---|
+| **Mesh2Motion** https://mesh2motion.org/ | browser (HP oke) | open-source, auto-rig humanoid+quadruped+burung, export anim |
+| **Cinevva Auto Rigger** https://app.cinevva.com | browser | GLB/FBX/OBJ in → rigged GLB out; ada text-to-motion gratis |
+| **Quaternius UAL** | library | 250+ animasi CC0 rig universal, retarget Unity/Unreal/Godot |
+| **AccuRIG 2.0** | Windows | auto-rigger desktop terbaik, gratis (butuh PC) |
+| **Blender Rigify** | PC | kontrol penuh, gratis |
+
+File untuk jalur ini: **`shibahu.glb`** (15,1 MB) — single-file GLB bertekstur embedded,
+T-pose, tanpa rig. Terverifikasi round-trip (`RENDERS/glb_verify.png`).
