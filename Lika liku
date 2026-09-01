@@ -8,3 +8,27 @@ tulis aja apa yang sudah dilakukan, diperbaiki, dan dikembangkan,
 - Step 2: viewer lookdev three.js (MeshToon 4-step + rim hijau + key hangat + toggle outline) + tools/preview/build_preview.sh biar preview reproducible. QA rasterizer render_solid.py: palet cocok referensi (jaket maroon, denim biru, rambut hijau, mata amber).
 - Catatan jujur: preview Arena HANYA buka di dalam chat Arena, tidak di browser luar; semua tunnel publik (cloudflared/ssh localhost.run/localtunnel) diblokir network sandbox. Bukti visual = render solid di chat.
 - Berikutnya: Step 3 = "hidup" — ekspor animasi Take 001 (~10,7s), spring-bone rambut/ekor/jaket, slider ekspresi blendshape.
+
+## 2026-09-01 (lanjutan sesi arena) — riset format, budget, & keluhan komunitas
+
+**Format (mana yang worth it):**
+- OBJ = geometri saja (tanpa tulang/animasi); hanya untuk exchange/archiving & fallback tool tua (Mixamo).
+- FBX = standar pipeline karakter ber-skeleton/animasi di Unity/Unreal; proprietary & rewel versi (kita alami sendiri di Mixamo).
+- GLB/glTF = standar terbuka modern: single-file, PBR-native, kecil, native di web/AR (Android Scene Viewer) & Godot 4; animasi kompleks masih lebih mulus FBX.
+- Aturan praktis komunitas: "skeleton → FBX; tanpa skeleton → GLB". Master tetap di DCC/zip sumber.
+
+**Budget karakter mobile (ARPG open-world, third person):**
+- Hero mobile: 15k–30K tris (kasual 5–8k); referensi Genshin ±15–20k tris; Fortnite ±30–35k; NPC 5–15k; prop 100–500.
+- Total skena mobile mid-range ±300–500k tris; LOD wajib (min. 3 tingkat).
+- Shibahu saat ini 72,3k tris & 218 joint → 2–4× budget hero mobile; perlu decimate + reduksi bone (Mixamo standard = 65 bone) + tekstur 1K untuk kelas menengah-bawah.
+
+**Keluhan paling basic dev (sebelum/awal buat game), pola berulang di komunitas:**
+1. Scope creep / overscoping — RPG/open-world sebagai proyek awal = "black hole"; saran: game pertama sekecil mungkin, modular scoping, backlog "onion".
+2. Pipeline karakter 3D = tembok terbesar: modeling→UV→tekstur→rig→weight→animasi→blend→retarget→state machine; animasi "takes forever"; kesalahan weight kecil merusak animasi. (= persis saga Mixamo kita)
+3. Tidak tahu mulai dari mana / tutorial hell / takut salah.
+4. Solo dev: motivasi & feedback minim; Shiny New Idea syndrome.
+5. Manajemen/produksi saat mulai ada tim.
+
+**Implikasi buat Journey:** langkah bernilai tinggi berikutnya = vertical slice kecil
+(1 area + Shibahu bisa gerak/serang + 1 musuh) SEBELUM membangun open world;
+plus varian "mobile budget" Shibahu (decimate ~15–20k tris, LOD, bone reduction).
