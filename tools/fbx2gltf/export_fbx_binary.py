@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
-"""Binary FBX 7.4 writer with EMBEDDED textures (single-file, Mixamo 'embed media').
-Consumes the OBJ+MTL produced by export_mixamo.py (full variant) and packs
-geometry + materials + PNG bytes into one .fbx. Verified round-trip via fbx2gltf.py.
+"""Binary FBX 7.4 writer, Blender-convention-exact, with EMBEDDED textures
+(single-file Mixamo 'embed media'). IDs as int32, connections [S I I],
+Blender-matching node tree (FileId/CreationTime/Creator/Takes, GeometryVersion,
+LayerElement Version children). Verified round-trip via fbx2gltf.py parser.
 Usage: export_fbx_binary.py <obj_path> <out_fbx>
 """
 import struct, sys, os
@@ -61,7 +62,7 @@ def main():
         t = line.split()
         if not t: continue
         if t[0] == 'v': V += [float(x) for x in t[1:4]]
-        elif t[0] == 'vt': VT += [float(t[1]), 1.0 - float(t[2])]  # OBJ bottom-left -> FBX top-left
+        elif t[0] == 'vt': VT += [float(t[1]), 1.0 - float(t[2])]
         elif t[0] == 'vn': VN += [float(x) for x in t[1:4]]
         elif t[0] == 'usemtl':
             cur = t[1]; groups.append([cur, [], []])
@@ -70,9 +71,8 @@ def main():
             groups[-1][1] += [i[0] - 1 for i in ids]
             groups[-1][2] += [(i[1] - 1, i[2] - 1) for i in ids]
     ntris = sum(len(g[1]) // 3 for g in groups)
-    corners = ntris * 3
-    pvi = []; nrm = []; uvi = []; uvidx = []; matids = []
-    for mi, (m, idxs, uvn) in enumerate(groups):
+    pvi = []; nrm = []; uvidx = []; matids = []
+    for m, idxs, uvn in groups:
         for k in range(len(idxs)):
             pvi.append(idxs[k] if k % 3 != 2 else ~idxs[k])
             vi, ni = uvn[k]
@@ -85,16 +85,21 @@ def main():
     tex_ids = {m: 4000 + i for i, m in enumerate(have_tex)}
     vid_ids = {m: 5000 + i for i, m in enumerate(have_tex)}
 
-    geo = N('Geometry', [prop('L', GEO), prop('S', 'Geometry::Shibahu'), prop('S', 'Mesh')], [
+    def lay_el(typ, extra_children):
+        return N('LayerElement' + typ, [prop('I', 101)], [
+            N('Version', [prop('I', 101)]),
+            N('Name', [prop('S', '')]),
+            N('MappingInformationType', [prop('S', 'ByPolygonVertex' if typ == 'Normal' else 'ByPolygonVertex' if typ == 'UV' else 'ByPolygon')]),
+            N('ReferenceInformationType', [prop('S', 'Direct' if typ == 'Normal' else 'IndexToDirect')]),
+        ] + extra_children)
+
+    geo = N('Geometry', [prop('I', GEO), prop('S', 'Geometry::Shibahu'), prop('S', 'Mesh')], [
         N('Vertices', [prop('d', V)]),
         N('PolygonVertexIndex', [prop('i', pvi)]),
-        N('LayerElementNormal', [prop('I', 101)], [
-            N('Name', [prop('S', '')]),
-            N('MappingInformationType', [prop('S', 'ByPolygonVertex')]),
-            N('ReferenceInformationType', [prop('S', 'Direct')]),
-            N('Normals', [prop('d', nrm)]),
-        ]),
+        N('GeometryVersion', [prop('I', 124)]),
+        lay_el('Normal', [N('Normals', [prop('d', nrm)])]),
         N('LayerElementUV', [prop('I', 101)], [
+            N('Version', [prop('I', 101)]),
             N('Name', [prop('S', 'map1')]),
             N('MappingInformationType', [prop('S', 'ByPolygonVertex')]),
             N('ReferenceInformationType', [prop('S', 'IndexToDirect')]),
@@ -102,49 +107,48 @@ def main():
             N('UVIndex', [prop('i', uvidx)]),
         ]),
         N('LayerElementMaterial', [prop('I', 101)], [
+            N('Version', [prop('I', 101)]),
             N('Name', [prop('S', '')]),
             N('MappingInformationType', [prop('S', 'ByPolygon')]),
             N('ReferenceInformationType', [prop('S', 'IndexToDirect')]),
             N('Materials', [prop('i', matids)]),
         ]),
         N('Layer', [prop('I', 100)], [
-            N('LayerElement', [prop('S', 'LayerElementNormal'), prop('I', 0)]),
-            N('LayerElement', [prop('S', 'LayerElementMaterial'), prop('I', 0)]),
-            N('LayerElement', [prop('S', 'LayerElementUV'), prop('I', 0)]),
+            N('LayerElement', [], [N('Type', [prop('S', 'LayerElementNormal')]), N('TypedIndex', [prop('I', 0)])]),
+            N('LayerElement', [], [N('Type', [prop('S', 'LayerElementMaterial')]), N('TypedIndex', [prop('I', 0)])]),
+            N('LayerElement', [], [N('Type', [prop('S', 'LayerElementUV')]), N('TypedIndex', [prop('I', 0)])]),
         ]),
     ])
-    model = N('Model', [prop('L', MOD), prop('S', 'Model::Shibahu'), prop('S', 'Mesh')], [
+    model = N('Model', [prop('I', MOD), prop('S', 'Model::Shibahu'), prop('S', 'Mesh')], [
         N('Version', [prop('I', 232)]),
         N('Properties70', [], [
-            P('Lcl Translation', 'Lcl Translation', 'A', 0, 0, 0),
-            P('Lcl Rotation', 'Lcl Rotation', 'A', 0, 0, 0),
-            P('Lcl Scaling', 'Lcl Scaling', 'A', 1, 1, 1),
+            P('Lcl Translation', 'Lcl Translation', 'A', 0.0, 0.0, 0.0),
+            P('Lcl Rotation', 'Lcl Rotation', 'A', 0.0, 0.0, 0.0),
+            P('Lcl Scaling', 'Lcl Scaling', 'A', 1.0, 1.0, 1.0),
         ]),
-        N('Shading', [prop('C', 1)]),
+        N('Shading', [prop('I', 1)]),
         N('Culling', [prop('S', 'CullingOff')]),
     ])
     matnodes = []
     for m in mtl_order:
-        matnodes.append(N('Material', [prop('L', mat_ids[m]), prop('S', 'Material::%s' % m), prop('S', '')], [
+        matnodes.append(N('Material', [prop('I', mat_ids[m]), prop('S', 'Material::%s' % m), prop('S', '')], [
             N('Version', [prop('I', 102)]),
             N('ShadingModel', [prop('S', 'phong')]),
-            N('MultiLayer', [prop('C', 0)]),
+            N('MultiLayer', [prop('I', 0)]),
             N('Properties70', [], [P('DiffuseColor', 'Color', 'A', 0.8, 0.8, 0.8)]),
         ]))
     texnodes = []; vidnodes = []
     for m in have_tex:
-        rel = mtl_tex[m]
-        fn = rel.split('/')[-1]
-        png = open(os.path.join(base, rel), 'rb').read()
-        vidnodes.append(N('Video', [prop('L', vid_ids[m]), prop('S', 'Video::%s_vid' % m), prop('S', 'Clip')], [
+        fn = mtl_tex[m].split('/')[-1]
+        png = open(os.path.join(base, mtl_tex[m]), 'rb').read()
+        vidnodes.append(N('Video', [prop('I', vid_ids[m]), prop('S', 'Video::%s_vid' % m), prop('S', 'Clip')], [
             N('Type', [prop('S', 'Clip')]),
-            N('Properties70', [], [N('P', [prop('S','Path'),prop('S','Path'),prop('S',''),prop('S',''),prop('S',fn)])]),
             N('UseMipMap', [prop('I', 0)]),
             N('FileName', [prop('S', fn)]),
             N('RelativeFilename', [prop('S', fn)]),
             N('Content', [prop('R', png)]),
         ]))
-        texnodes.append(N('Texture', [prop('L', tex_ids[m]), prop('S', 'Texture::%s_map' % m), prop('S', '')], [
+        texnodes.append(N('Texture', [prop('I', tex_ids[m]), prop('S', 'Texture::%s_map' % m), prop('S', '')], [
             N('Type', [prop('S', 'TextureVideoClip')]),
             N('Version', [prop('I', 202)]),
             N('TextureName', [prop('S', '%s_map' % m)]),
@@ -156,20 +160,29 @@ def main():
             N('Texture_Alpha_Source', [prop('S', 'None')]),
             N('Cropping', [prop('I', 0), prop('I', 0), prop('I', 0), prop('I', 0)]),
         ]))
-    cons = [N('C', [prop('S', 'OO'), prop('L', MOD), prop('L', 0)]),
-            N('C', [prop('S', 'OO'), prop('L', GEO), prop('L', MOD)])]
+    cons = [N('C', [prop('S', 'OO'), prop('I', MOD), prop('I', 0)]),
+            N('C', [prop('S', 'OO'), prop('I', GEO), prop('I', MOD)])]
     for m in mtl_order:
-        cons.append(N('C', [prop('S', 'OO'), prop('L', mat_ids[m]), prop('L', MOD)]))
+        cons.append(N('C', [prop('S', 'OO'), prop('I', mat_ids[m]), prop('I', MOD)]))
         if m in have_tex:
-            cons.append(N('C', [prop('S', 'OO'), prop('L', tex_ids[m]), prop('L', mat_ids[m]), prop('S', 'DiffuseColor')]))
-            cons.append(N('C', [prop('S', 'OO'), prop('L', vid_ids[m]), prop('L', tex_ids[m])]))
+            cons.append(N('C', [prop('S', 'OO'), prop('I', tex_ids[m]), prop('I', mat_ids[m]), prop('S', 'DiffuseColor')]))
+            cons.append(N('C', [prop('S', 'OO'), prop('I', vid_ids[m]), prop('I', tex_ids[m])]))
     nobj = 2 + len(mtl_order) + 2 * len(have_tex)
     roots = [
         N('FBXHeaderExtension', [], [
             N('FBXHeaderVersion', [prop('I', 1003)]),
             N('FBXVersion', [prop('I', 7400)]),
-            N('Creator', [prop('S', 'Journey fbx2gltf (binary, embedded media)')]),
+            N('EncryptionType', [prop('I', 0)]),
+            N('CreationTimeStamp', [], [
+                N('Version', [prop('I', 1000)]),
+                N('Year', [prop('I', 2026)]), N('Month', [prop('I', 9)]), N('Day', [prop('I', 1)]),
+                N('Hour', [prop('I', 0)]), N('Minute', [prop('I', 0)]), N('Second', [prop('I', 0)]), N('Millisecond', [prop('I', 0)]),
+            ]),
+            N('Creator', [prop('S', 'Journey fbx2gltf')]),
         ]),
+        N('FileId', [prop('R', bytes(range(16)))]),
+        N('CreationTime', [prop('S', '2026-09-01 00:00:00:000')]),
+        N('Creator', [prop('S', 'Journey fbx2gltf (binary, embedded media)')]),
         N('GlobalSettings', [], [
             N('Version', [prop('I', 1000)]),
             N('Properties70', [], [
@@ -179,7 +192,10 @@ def main():
                 P('FrontAxisSign', 'int', 'Integer', '', 1),
                 P('CoordAxis', 'int', 'Integer', '', 0),
                 P('CoordAxisSign', 'int', 'Integer', '', 1),
-                P('UnitScaleFactor', 'double', 'Number', '', 1),
+                P('OriginalUpAxis', 'int', 'Integer', '', -1),
+                P('OriginalUpAxisSign', 'int', 'Integer', '', 1),
+                P('UnitScaleFactor', 'double', 'Number', '', 1.0),
+                P('OriginalUnitScaleFactor', 'double', 'Number', '', 1.0),
             ]),
         ]),
         N('Documents', [], [N('Count', [prop('I', 1)])]),
@@ -196,6 +212,7 @@ def main():
         ]),
         N('Objects', [], [geo, model] + matnodes + texnodes + vidnodes),
         N('Connections', [], cons),
+        N('Takes', [], [N('Current', [prop('S', '')])]),
     ]
     out = [b'Kaydara FBX Binary  \x00\x1a\x00', struct.pack('<I', 7400)]
     off = 27
