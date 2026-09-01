@@ -97,6 +97,7 @@ def main():
         for pr in me['primitives']:
             mat=g['materials'][pr['material']]
             pos,_=acc_data(pr['attributes']['POSITION'])
+            nor,_=acc_data(pr['attributes']['NORMAL']) if 'NORMAL' in pr['attributes'] else (None,None)
             uv,_=acc_data(pr['attributes']['TEXCOORD_0']) if 'TEXCOORD_0' in pr['attributes'] else (None,None)
             jn,_=acc_data(pr['attributes']['JOINTS_0']); wt,_=acc_data(pr['attributes']['WEIGHTS_0'])
             node_idx=None
@@ -106,9 +107,10 @@ def main():
             mg=gmat(node_idx) if node_idx is not None else [1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1]
             npts=len(pos)//3
             smats={}
+            is_line = (mat.get('pbrMetallicRoughness',{}).get('baseColorTexture') is None)
             for vi in range(npts):
                 x,y,z=pos[vi*3:vi*3+3]
-                X=Y=Z=0.0
+                X=Y=Z=0.0; NX=NY=NZ=0.0
                 for k in range(4):
                     w=wt[vi*4+k]
                     if w<=0: continue
@@ -118,14 +120,18 @@ def main():
                     m=smats[key]
                     px=m[0]*x+m[1]*y+m[2]*z+m[3]; py=m[4]*x+m[5]*y+m[6]*z+m[7]; pz=m[8]*x+m[9]*y+m[10]*z+m[11]
                     X+=w*px; Y+=w*py; Z+=w*pz
+                    if nor is not None:
+                        nx,ny,nz=nor[vi*3:vi*3+3]
+                        NX+=w*(m[0]*nx+m[1]*ny+m[2]*nz); NY+=w*(m[4]*nx+m[5]*ny+m[6]*nz); NZ+=w*(m[8]*nx+m[9]*ny+m[10]*nz)
                 X,Y,Z = xform(mg,(X,Y,Z))
+                NX,NY,NZ = (mg[0]*NX+mg[1]*NY+mg[2]*NZ, mg[4]*NX+mg[5]*NY+mg[6]*NZ, mg[8]*NX+mg[9]*NY+mg[10]*NZ)
                 if uv is not None:
                     u,v=uv[vi*2],uv[vi*2+1]
                     col,al=sample(mat,u,v)
                     if mat.get('alphaMode') in ('MASK','BLEND') and al<0.5: continue
                 else:
                     col,_=sample(mat,0,0)
-                pts.append((X,Y,Z,col))
+                pts.append((X,Y,Z,col,(NX,NY,NZ),is_line))
     # bounds
     xs=[p[0] for p in pts]; ys=[p[1] for p in pts]; zs=[p[2] for p in pts]
     mn=[min(xs),min(ys),min(zs)]; mx=[max(xs),max(ys),max(zs)]
@@ -142,8 +148,22 @@ def main():
             cx=( (sx-(mn[0] if view=='front' else (-mx[0] if view=='back' else mn[2])))/sc )*W*0.8+W*0.1
             cy=H-(((sy-mn[1])/sc)*H*0.9+H*0.05)
             return cx,cy,d
+        import math as _m
+        L=(0.45,0.6,0.65); ln=_m.sqrt(sum(v*v for v in L)); L=[v/ln for v in L]
+        V={'front':(0,0,1),'back':(0,0,-1),'side':(1,0,0)}[view]
+        def shade(col,nrm,line):
+            if line or nrm is None: return col
+            nx,ny,nz=nrm; nl=_m.sqrt(nx*nx+ny*ny+nz*nz) or 1.0
+            nx,ny,nz=nx/nl,ny/nl,nz/nl
+            ndl=nx*L[0]+ny*L[1]+nz*L[2]
+            b=1.05 if ndl>0.6 else 0.9 if ndl>0.15 else 0.75 if ndl>-0.1 else 0.6
+            dv=nx*V[0]+ny*V[1]+nz*V[2]
+            fr=(1.0-max(0.0,min(1.0,dv)))**2.5
+            r=int(min(255,col[0]*b+255*0.45*fr*0.35)); gg=int(min(255,col[1]*b+255*1.0*fr*0.35)); bb=int(min(255,col[2]*b+255*0.62*fr*0.35))
+            return (r,gg,bb)
         order=sorted(pts,key=lambda p:(p[2] if view=='front' else (-p[2] if view=='back' else p[0])))
-        for x,y,z,col in order:
+        for x,y,z,col,nrm,line in order:
+            col=shade(col,nrm,line)
             cx,cy,d=proj((x,y,z))
             ix,iy=int(cx),int(cy)
             for dy in range(2):
