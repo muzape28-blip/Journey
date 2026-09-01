@@ -133,14 +133,17 @@ def export(fbx_path, out_dir, tex_dir_name='textures'):
 
     # geometry->model, material->geometry, cluster links, blendshape links
     geo2model={}; mat2geo={}; cluster2geo={}; cluster2bone={}; bs2geo={}; chan2shape={}
+    skin2geo={}; cl2skin={}
     for s,d in OO:
         if s in geoms and d in models: geo2model[s]=d
         if s in mats and d in models: mat2geo.setdefault(d,[]).append(s)
-        if s in defs and defs[s]['type']=='Cluster' and d in geoms: cluster2geo.setdefault(d,[]).append(s)
-        if s in defs and s in models: pass
+        if s in defs and defs[s]['type']=='Skin' and d in geoms: skin2geo[s]=d
+        if s in defs and defs[s]['type']=='Cluster' and d in defs and defs[d]['type']=='Skin': cl2skin[s]=d
         if s in models and d in defs and defs[d]['type']=='Cluster': cluster2bone[d]=s
         if s in defs and defs[s]['type']=='BlendShape' and d in geoms: bs2geo.setdefault(d,[]).append(s)
         if s in geoms and geoms[s]['type']=='Shape' and d in defs and defs[d]['type']=='BlendShapeChannel': chan2shape[d]=s
+    for cl,sk in cl2skin.items():
+        if sk in skin2geo: cluster2geo.setdefault(skin2geo[sk],[]).append(cl)
 
     # channel -> parent blendshape
     chan_parent={}
@@ -170,7 +173,8 @@ def export(fbx_path, out_dir, tex_dir_name='textures'):
         fmt={5120:'b',5121:'B',5122:'h',5123:'H',5125:'I',5126:'f'}[comp_type]
         a=array.array(fmt, arr_list)
         bv=add_bufview(a.tobytes(), t)
-        ac={'bufferView':bv,'componentType':comp_type,'count':len(arr_list)//comp_count,'type':comp_count}
+        ac={'bufferView':bv,'componentType':comp_type,'count':len(arr_list)//comp_count,
+            'type':{1:'SCALAR',2:'VEC2',3:'VEC3',4:'VEC4',16:'MAT4'}[comp_count]}
         accs.append(ac); return len(accs)-1
     def acc_vec(arr_list, comp_count, comp_type=5126, target=34962):
         return acc(comp_type, comp_count, arr_list, target)
@@ -325,18 +329,61 @@ def export(fbx_path, out_dir, tex_dir_name='textures'):
         return dict(pos=pos,nor=nor,uvc=uvc,tri_groups=tri_groups,jnt=jnt,wgt=wgt,targets=targets,orig=orig)
 
     # ---------------- nodes & meshes & skins ----------------
+    def p70(node):
+        """Read Lcl Translation/Rotation/Scaling/PreRotation from Properties70."""
+        t=[0,0,0]; r=[0,0,0]; s=[1,1,1]; pre=[0,0,0]
+        pn=child(node,'Properties70')
+        if pn is None: return t,r,s,pre
+        for p in pn['c']:
+            if p['n']!='P' or not p['p']: continue
+            name=p['p'][0]
+            nums=[x for x in p['p'][1:] if isinstance(x,float)]
+            if len(nums)>=3:
+                if name=='Lcl Translation': t=nums[:3]
+                elif name=='Lcl Rotation': r=nums[:3]
+                elif name=='Lcl Scaling': s=nums[:3]
+                elif name=='PreRotation': pre=nums[:3]
+        return t,r,s,pre
+
+    # TransformLink per bone (row-major)
+    TL={}
+    for cl,bone in cluster2bone.items():
+        tn=child(defs[cl]['node'],'TransformLink')
+        if tn is not None and bone not in TL: TL[bone]=[float(x) for x in tn['p'][0]]
+
+    def lmat(i):
+        n=models[i]['node']
+        t,r,s,pre=p70(n)
+        q=euler_xyz_quat(math.radians(r[0]),math.radians(r[1]),math.radians(r[2]))
+        qp=euler_xyz_quat(math.radians(pre[0]),math.radians(pre[1]),math.radians(pre[2]))
+        T=[1,0,0,t[0],0,1,0,t[1],0,0,1,t[2],0,0,0,1]
+        S=[s[0],0,0,0,0,s[1],0,0,0,0,s[2],0,0,0,0,1]
+        return m4_mul(m4_mul(m4_mul(T,quat_of(qp)),quat_of(q)),S)
+    def quat_of(q):
+        x,y,z,w=q
+        return [1-2*(y*y+z*z),2*(x*y-z*w),2*(x*z+y*w),0,2*(x*y+z*w),1-2*(x*x+z*z),2*(y*z-x*w),0,2*(x*z-y*w),2*(y*z+x*w),1-2*(x*x+y*y),0,0,0,0,1]
+
+    gmat_cache={}
+    def gmat(i):
+        if i in gmat_cache: return gmat_cache[i]
+        if i in TL: M=TL[i]
+        else:
+            L=lmat(i)
+            M=m4_mul(gmat(parent[i]),L) if i in parent else L
+        gmat_cache[i]=M; return M
+
+    def colmajor(M):
+        # glTF column-major: element k = (row=k%4, col=k//4)
+        return [M[r*4+c] for c in range(4) for r in range(4)]
+
     gltf_nodes=[]
     def add_node_for(mid):
-        m=models[mid]
-        n=m['node']
-        t=d3(n,'Lcl Translation') or [0,0,0]
-        r=d3(n,'Lcl Rotation') or [0,0,0]
-        s=d3(n,'Lcl Scaling') or [1,1,1]
-        q=euler_xyz_quat(math.radians(r[0]),math.radians(r[1]),math.radians(r[2]))
-        node={'name':m['name']}
-        node['translation']=[float(x) for x in t]
-        node['rotation']=[float(x) for x in q]
-        node['scale']=[float(x) for x in s]
+        M=gmat(mid)
+        if mid in parent and parent[mid] in models:
+            L=m4_mul(m4_inv(gmat(parent[mid])),M)
+        else:
+            L=M
+        node={'name':models[mid]['name'],'matrix':colmajor(L)}
         idx=len(gltf_nodes); gltf_nodes.append(node); node_id2idx[mid]=idx
         return idx
 
@@ -382,23 +429,11 @@ def export(fbx_path, out_dir, tex_dir_name='textures'):
             p=node_id2idx[parent[mid]]
             gltf_nodes[p].setdefault('children',[]).append(node_id2idx[mid])
 
-    # skin: inverse bind matrices from TransformLink
+    # skin: inverse bind matrices = inverse of joint global bind (TransformLink-based)
     ibm=[]
     for ji in joints_list:
-        # find any cluster for this bone to get TransformLink; fallback identity
-        tl=None
-        for cl,bone in cluster2bone.items():
-            if bone==ji:
-                dn=defs[cl]['node']; tn=child(dn,'TransformLink')
-                if tn is not None: tl=list(tn['p'][0])
-                break
-        if tl is None: M=m4_ident()
-        else:
-            # tl row-major
-            M=[tl[r*4+c] for r in range(4) for c in range(4)]
-        inv=m4_inv(M)
-        # glTF column-major
-        ibm += [inv[r*4+c] for c in range(4) for r in range(4)]
+        inv=m4_inv(gmat(ji))
+        ibm += colmajor(inv)
     a_ibm=acc_vec(ibm,16)
     skin={'joints':[node_id2idx[j] for j in joints_list],'inverseBindMatrices':a_ibm}
     root_joint=joints_list[0]
