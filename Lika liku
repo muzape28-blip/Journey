@@ -1,3 +1,10 @@
 
 DISINI PERJALANAN **journey**, perjalanan dan lika liku seorang yang ingin membuat game.
 tulis aja apa yang sudah dilakukan, diperbaiki, dan dikembangkan,
+
+--- 2026-09-01 (sesi arena) ---
+- Step 0: rapikan aset — tekstur 4K->2K, hapus duplikasi & nested zip (162MB -> 43MB).
+- Step 1: tools/fbx2gltf (parser+exporter FBX->glTF Python murni): skinning 218 joint, 17 blendshape wajah, relink material (dif/lgt/msk), alpha rambut & blush. 4 bug fatal diperbaiki: accessor.type wajib string, rantai skin Model->Cluster->Skin->Geometry, transform ada di Properties70 (incl PreRotation), matrix glTF column-major.
+- Step 2: viewer lookdev three.js (MeshToon 4-step + rim hijau + key hangat + toggle outline) + tools/preview/build_preview.sh biar preview reproducible. QA rasterizer render_solid.py: palet cocok referensi (jaket maroon, denim biru, rambut hijau, mata amber).
+- Catatan jujur: preview Arena HANYA buka di dalam chat Arena, tidak di browser luar; semua tunnel publik (cloudflared/ssh localhost.run/localtunnel) diblokir network sandbox. Bukti visual = render solid di chat.
+- Berikutnya: Step 3 = "hidup" — ekspor animasi Take 001 (~10,7s), spring-bone rambut/ekor/jaket, slider ekspresi blendshape.
