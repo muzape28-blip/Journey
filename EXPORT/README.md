@@ -66,3 +66,13 @@ Mixamo terbukti tidak stabil (outage massal Juni 2025, maintenance mode, error u
 
 File untuk jalur ini: **`shibahu.glb`** (15,1 MB) — single-file GLB bertekstur embedded,
 T-pose, tanpa rig. Terverifikasi round-trip (`RENDERS/glb_verify.png`).
+
+## v6 — `shibahu_rigged.glb` (17,6 MB): jawaban error Cinevva "MIA seam duplicates disagree"
+
+Error itu artinya pipeline mereka menuntut vertex duplikat di seam UV punya skin weight
+identik. GLB v5 tak ber-weight → proses internal mereka gagal. v6 menyertakan skeleton
+sederhana 20 bone (Hips/Spine/Chest/Neck/Head/Tail + rantai lengan & kaki, gaya Mixamo)
++ weight hasil collapse rig sumber 218 joint. Weight asli identik di seam-duplicates,
+terverifikasi: 14.545 posisi duplikat exact, 0 yang weight-nya berbeda.
+File ini juga langsung dipakai di Unity/Unreal/Godot TANPA auto-rigger.
+Urutan coba di Cinevva: (1) shibahu_rigged.glb, (2) shibahu.glb, (3) Mesh2Motion.
