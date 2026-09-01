@@ -17,7 +17,12 @@ def main():
     def acc(i):
         a = g['accessors'][i]; b = g['bufferViews'][a['bufferView']]
         n = a['count'] * {'SCALAR': 1, 'VEC2': 2, 'VEC3': 3}[a['type']]
-        fmt = '<%df' % n if a['componentType'] == 5126 else '<%dI' % n
+        if a['componentType'] == 5126:
+            fmt = '<%df' % n
+        elif a['componentType'] == 5123:
+            fmt = '<%dH' % n
+        else:
+            fmt = '<%dI' % n
         return list(struct.unpack_from(fmt, binb, b['byteOffset']))
 
     imgs = {}

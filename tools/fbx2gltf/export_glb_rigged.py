@@ -186,7 +186,12 @@ def main():
     nor_i = accf([c for p in N for c in p], 'VEC3', 34962)
     uv_i = accf([c for p in U for c in p], 'VEC2', 34962)
     w_i = accf(W4, 'VEC4', 34962)
-    j_i = accf([float(x) for x in J4], 'VEC4', 34962)
+    # JOINTS_0 wajib integer (spec glTF: UNSIGNED_BYTE/SHORT) — float bikin
+    # validator/loader ketat crash
+    jraw = struct.pack('<%dH' % len(J4), *[int(x) for x in J4])
+    accs.append({'bufferView': bv(jraw, 34962), 'componentType': 5123,
+                 'count': len(J4) // 4, 'type': 'VEC4'})
+    j_i = len(accs) - 1
     images = []; textures = []; samplers = [{'magFilter': 9729, 'minFilter': 9987, 'wrapS': 10497, 'wrapT': 10497}]
     texidx = {}
     def get_tex(m):
@@ -219,11 +224,16 @@ def main():
         primitives.append({'attributes': {'POSITION': pos_i, 'NORMAL': nor_i, 'TEXCOORD_0': uv_i, 'JOINTS_0': j_i, 'WEIGHTS_0': w_i}, 'indices': len(accs) - 1, 'material': mtl_order.index(m)})
     # nodes: joints first then mesh node
     gnodes = []
+    bidx = {b: i for i, b in enumerate(SIMPLE)}
     for b in SIMPLE:
         p = PARENT.get(b)
         rp = rest[b]; pp = rest[p] if p else (0, 0, 0)
         nd = {'name': b, 'translation': [rp[0] - pp[0], rp[1] - pp[1], rp[2] - pp[2]]}
         gnodes.append(nd)
+    # hierarchy: sambungkan children sesuai PARENT (tanpa ini tulang jadi orphan
+    # dan translation relatif-parent jadi salah posisi di semua engine)
+    for b, p in PARENT.items():
+        gnodes[bidx[p]].setdefault('children', []).append(bidx[b])
     joint_node_ids = list(range(len(SIMPLE)))
     mesh_node_id = len(gnodes)
     gnodes.append({'name': 'Shibahu', 'mesh': 0, 'skin': 0})
@@ -238,7 +248,7 @@ def main():
         'images': images, 'textures': textures, 'samplers': samplers, 'materials': materials,
         'meshes': [{'name': 'Shibahu', 'primitives': primitives}],
         'skins': [{'inverseBindMatrices': ibm_i, 'joints': joint_node_ids, 'skeleton': 0, 'name': 'ShibahuRig'}],
-        'nodes': gnodes, 'scenes': [{'nodes': [mesh_node_id]}], 'scene': 0,
+        'nodes': gnodes, 'scenes': [{'nodes': [0, mesh_node_id]}], 'scene': 0,
     }
     jb = json.dumps(gltf, separators=(',', ':')).encode()
     jb += b' ' * ((4 - len(jb) % 4) % 4)

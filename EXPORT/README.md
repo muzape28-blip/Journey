@@ -76,3 +76,16 @@ sederhana 20 bone (Hips/Spine/Chest/Neck/Head/Tail + rantai lengan & kaki, gaya 
 terverifikasi: 14.545 posisi duplikat exact, 0 yang weight-nya berbeda.
 File ini juga langsung dipakai di Unity/Unreal/Godot TANPA auto-rigger.
 Urutan coba di Cinevva: (1) shibahu_rigged.glb, (2) shibahu.glb, (3) Mesh2Motion.
+
+## v7 — perbaikan besar: validator resmi + GLB khusus Mesh2Motion
+
+1. `shibahu_rigged.glb` DIPERBAIKI (sebelumnya cacat, ketahuan dari gltf-transform
+   validate): JOINTS_0 sekarang USHORT sesuai spec (dulu float — bikin validator
+   crash & loader ketat menolak), hierarki tulang disambungkan via `children`
+   (dulu orphan!), root skeleton masuk scene. Sekarang: 0 error / 0 warning /
+   0 hint, 20 bone di scene graph, 14.545 seam-duplicate → 0 beda weights.
+2. BARU: `shibahu_m2m.glb` (3,2 MB) — khusus auto-rigger browser (Mesh2Motion dkk):
+   satu mesh, satu primitive, material polos + tekstur 1x1 embedded, tanpa
+   skeleton/ground/cheek/outline. Juga 0 error/warning/hint.
+3. Ketiga GLB kini lolos `npx @gltf-transform/cli validate`.
+Urutan coba: rigged → m2m (Mesh2Motion) → shibahu.glb.
