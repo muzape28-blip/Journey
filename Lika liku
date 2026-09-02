@@ -85,3 +85,8 @@ gratis) export Web/APK headless, artifact diunduh user di HP.
   tak berlaku di sini.
 - Lorong data alternatif: git (CI commit manifest balik), codeload zip,
   pip --break-system-packages (PIL 12.3.0 terpasang), npm registry.
+- ROOT-CAUSE "aplikasi tidak kompatibel": kunci preset SALAH — "architectures/armv7"
+  tidak dikenal Godot 4.7.2 (yg benar "architectures/armeabi-v7a" /
+  "architectures/arm64-v8a", source export_plugin.cpp L703/2224); kunci asing
+  diabaikan diam-diam → default = arm64 SAJA → OS 32-bit menolak. ZDEV aman
+  karena pakai kunci benar. Diperbaiki + push (build otomatis).
