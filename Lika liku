@@ -32,3 +32,17 @@ tulis aja apa yang sudah dilakukan, diperbaiki, dan dikembangkan,
 **Implikasi buat Journey:** langkah bernilai tinggi berikutnya = vertical slice kecil
 (1 area + Shibahu bisa gerak/serang + 1 musuh) SEBELUM membangun open world;
 plus varian "mobile budget" Shibahu (decimate ~15–20k tris, LOD, bone reduction).
+
+[2026-09-02] REVIEW fieldfbx.zip (push user di main): isi = scene "Field(free)"
+dari addon Blender botaniq (export Blender 4.0.1). 4233 objek, 3,44jt vert,
+1,145jt tris, 16 material (grass x6 spesies, flower, mushrooms, rocks, bark,
+leaf), 4 JPEG embedded (incl. mud 8K), TANPA skeleton, patch kecil ±3,4x1,8 m.
+fbx2gltf.py di-hardening (guard UV/normal index, skin opsional) biar FBX dialect
+botaniq ke-parse; render review di RENDERS/field_review_*.png.
+Riset Godot: engine tekstual (.tscn/.tres/.gd) = ramah agen; AnimationTree =
+state machine bawaan utk 6 klip; glTF native; FBX native via ufbx (4.4+);
+ekosistem MCP utk AI (Coding-Solo headless CLI, tugcantopaloglu 157 tools,
+hybridindie, alexmeckes runtime-input+screenshot, IvanMurzak +SKILL.md gen);
+sandbox TIDAK bisa download biner Godot (github/tuxfamily diblokir) → jalur
+native yg hidup hari ini = GitHub Actions + barichello/godot-ci (repo publik
+gratis) export Web/APK headless, artifact diunduh user di HP.

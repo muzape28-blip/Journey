@@ -279,11 +279,12 @@ def export(fbx_path, out_dir, tex_dir_name='textures'):
             for k in range(1,len(poly)-1):
                 for vi in (poly[0],poly[k],poly[k+1]):
                     ni=vi if G['n_map'] in ('ByVertice','ByVertex') else corner
-                    ui=G['uvi'][corner] if G['uvi'] else corner
-                    if G['uvs'] is None: u=(0.0,0.0)
+                    ui=G['uvi'][corner] if (G['uvi'] and corner < len(G['uvi'])) else (corner % len(G['uvi']) if G['uvi'] else corner)
+                    if G['uvs'] is None or ui*2+1 >= len(G['uvs']): u=(0.0,0.0)
                     else: u=(G['uvs'][ui*2], 1.0-G['uvs'][ui*2+1])
                     if G['normals'] is None: n=(0,0,0)
-                    else: n=(G['normals'][ni*3],G['normals'][ni*3+1],G['normals'][ni*3+2])
+                    elif ni*3+2 < len(G['normals']): n=(G['normals'][ni*3],G['normals'][ni*3+1],G['normals'][ni*3+2])
+                    else: n=(0.0,1.0,0.0)
                     key=(vi,ni,ui)
                     idx=vmap.get(key)
                     if idx is None:
@@ -405,14 +406,16 @@ def export(fbx_path, out_dir, tex_dir_name='textures'):
             a_pos=acc_pos(B['pos'])
             a_nor=acc_vec(B['nor'],3)
             a_uv=acc_vec(B['uvc'],2)
-            a_j=acc_vec(B['jnt'],4,5123)
-            a_w=acc_vec(B['wgt'],4)
+            a_j=acc_vec(B['jnt'],4,5123) if joints_list else None
+            a_w=acc_vec(B['wgt'],4) if joints_list else None
             matlist = mat2geo.get(geo2model.get(gid), [])
             for m,tri in B['tri_groups'].items():
                 mobj = matlist[m] if isinstance(m,int) and m < len(matlist) else None
                 mname = mats[mobj]['name'] if mobj in mats else 'lambert1'
                 a_i=acc_vec(tri,1,5125,34963)
-                prim={'attributes':{'POSITION':a_pos,'NORMAL':a_nor,'TEXCOORD_0':a_uv,'JOINTS_0':a_j,'WEIGHTS_0':a_w},'indices':a_i,'material':get_mat(mname)}
+                attrs={'POSITION':a_pos,'NORMAL':a_nor,'TEXCOORD_0':a_uv}
+                if joints_list: attrs['JOINTS_0']=a_j; attrs['WEIGHTS_0']=a_w
+                prim={'attributes':attrs,'indices':a_i,'material':get_mat(mname)}
                 if B['targets']:
                     tpos=[acc_vec(tp,3) for _,tp in B['targets']]
                     prim['targets']=[{'POSITION':p} for p in tpos]
@@ -421,7 +424,7 @@ def export(fbx_path, out_dir, tex_dir_name='textures'):
         if target_names: mesh['extras']={'targetNames':target_names}
         mesh_idx=len(meshes_out); meshes_out.append(mesh)
         gltf_nodes[ni]['mesh']=mesh_idx
-        gltf_nodes[ni]['skin']=0
+        if joints_list: gltf_nodes[ni]['skin']=0
 
     # node children/parents
     for mid in models:
@@ -430,14 +433,15 @@ def export(fbx_path, out_dir, tex_dir_name='textures'):
             gltf_nodes[p].setdefault('children',[]).append(node_id2idx[mid])
 
     # skin: inverse bind matrices = inverse of joint global bind (TransformLink-based)
-    ibm=[]
-    for ji in joints_list:
-        inv=m4_inv(gmat(ji))
-        ibm += colmajor(inv)
-    a_ibm=acc_vec(ibm,16)
-    skin={'joints':[node_id2idx[j] for j in joints_list],'inverseBindMatrices':a_ibm}
-    root_joint=joints_list[0]
-    skin['skeleton']=node_id2idx[root_joint]
+    skin=None
+    if joints_list:
+        ibm=[]
+        for ji in joints_list:
+            inv=m4_inv(gmat(ji))
+            ibm += colmajor(inv)
+        a_ibm=acc_vec(ibm,16)
+        skin={'joints':[node_id2idx[j] for j in joints_list],'inverseBindMatrices':a_ibm}
+        skin['skeleton']=node_id2idx[joints_list[0]]
 
     # materials finalize
     gltf_mats=[None]*len(mat_idx)
@@ -446,8 +450,8 @@ def export(fbx_path, out_dir, tex_dir_name='textures'):
     gltf={
       'asset':{'version':'2.0','generator':'Journey fbx2gltf'},
       'scene':0,'scenes':[{'nodes':[node_id2idx[r] for r in roots if r in node_id2idx]}],
-      'nodes':gltf_nodes,'meshes':meshes_out,'skins':[skin],
-      'materials':gltf_mats,'images':images,'textures':textures_list,'samplers':samplers,
+      'nodes':gltf_nodes,'meshes':meshes_out,
+      'materials':gltf_mats,'images':images,'textures':textures_list,'samplers':samplers,'skins':([skin] if skin else []),
       'accessors':accs,'bufferViews':bufviews,
       'buffers':[{'uri':'shibahu.bin','byteLength':sum(len(b) for b in bin_chunks)}],
     }
