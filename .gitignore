@@ -1,1 +1,7 @@
 preview/
+# Godot 4
+.godot/
+*.tmp
+build/
+export_credentials.cfg
+android/

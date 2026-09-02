@@ -55,3 +55,20 @@ gratis) export Web/APK headless, artifact diunduh user di HP.
 - Kamera: SpringArm3D (margin/exclude), pivot+2Y length 3; demo follow_camera 3-ray autoturn 25°/50°s; damped spring ζ=1 (Juckett, kode diverifikasi); FOV: Godot fov=VERTIKAL (keep_aspect KEEP_HEIGHT) → di 20:9 pakai vertikal 45–48° biar horizontal ≈85–90°.
 - Device: Infinix Smart 9 HD = Helio G50 (8×A53 64-bit!) + PowerVR GE8320 + 3GB + Android 14 Go → renderer Compatibility (GLES3), 30fps stabil, APK sideload via CI godot-ci.
 - Laporan lengkap: riset_movement_kamera_logika_godot.md (label bukti + gap jujur).
+## 2026-09-02 — E-strafe S1: proyek Godot lahir (branch arena/01a05959-journey)
+- Audit shibahu_new_animated.glb (main): 6 anim (idle-nana 3.97s, Jog Forward 0.93s,
+  Sprint 0.67s, Sprint Exit 1.67s, Dodge L/R 1.30s), 22 joint mixamorig, 71.988 tris,
+  semua in-place dengan jejak bend-back hips ±13cm → disanitasi runtime (freeze XZ, bob Y hidup).
+- Audit shibahu_animated_v2.glb (main): Jog Forward Left/Right/Lean Right 0.93s,
+  Ground Sit Enter/Idle/Exit → strafe ASLI, foot-slide solved.
+- Keputusan user: terrain "tahap sedang" = plane 60m material rostlinka 07_ground 2K
+  + rumput MultiMesh alpha-scissor (rostlinka12 2K + kartu 07c), tanpa Field 1.14M tris dulu.
+- Riset tajam: alpha-scissor >> alpha-blend utk rumput di TBDR; BlendSpace2D utk S3;
+  mirror left/right TIDAK ada di core Godot (proposal #8951 open) — koreksi klaim sesi lalu;
+  FBX via ufbx (FBX2glTF tak disarankan); ETC2/ASTC + 2K cap tekstur.
+- Kode S1: project.godot (compatibility, portrait 720x1600, ETC2/ASTC), player_controller
+  (E-strafe: jog 2.5, accel 40/decel 24, turn 10/s), camera_rig (top_level, drag-ONLY,
+  auto-rules OFF), floating_joystick (dynamic 120px, clamp 1.5x, scaled-radial dz 0.10),
+  hud (zona 50/50 lock-in), world_builder, main (merge 2 glb off-tree + sanitizer hips).
+- CI: docs/ci/android-build.yml [PERLU-VERIFIKASI-CI] — user paste ke .github/workflows.
+- BELUM diverifikasi runtime (sandbox tanpa Godot) → gerbang kebenaran = CI + UAT #1.

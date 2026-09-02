@@ -1,0 +1,36 @@
+# PENTING: salin isi file ini ke .github/workflows/android-build.yml via web UI
+# (GitHub App sandbox tidak punya izin `workflows` — blocker yang sama seperti ZDEV).
+# Status: [PERLU-VERIFIKASI-CI] — belum pernah dijalankan di repo ini.
+name: Android APK (E-strafe)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ["arena/01a05959-journey"]
+
+jobs:
+  export-android:
+    runs-on: ubuntu-latest
+    container:
+      image: barichello/godot-ci:latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Siapkan direktori
+        run: |
+          mkdir -p build ~/.local/share/godot/export_templates
+
+      - name: Import aset (headless)
+        run: |
+          godot --headless --import --path . || true
+
+      - name: Export APK (debug, armv7)
+        run: |
+          godot --headless --path . --export-debug "Android" build/Estrafe.apk
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: e-strafe-apk
+          path: build/*.apk

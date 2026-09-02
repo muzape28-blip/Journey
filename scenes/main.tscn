@@ -1,0 +1,85 @@
+[gd_scene load_steps=12 format=3 uid="uid://estrafe0main1"]
+
+[ext_resource type="Script" path="res://scripts/main.gd" id="1_main"]
+[ext_resource type="Script" path="res://scripts/player_controller.gd" id="2_player"]
+[ext_resource type="Script" path="res://scripts/camera_rig.gd" id="3_camrig"]
+[ext_resource type="Script" path="res://scripts/floating_joystick.gd" id="4_stick"]
+[ext_resource type="Script" path="res://scripts/hud.gd" id="5_hud"]
+[ext_resource type="Script" path="res://scripts/world_builder.gd" id="6_world"]
+[ext_resource type="PackedScene" path="res://shibahu_new_animated.glb" id="7_shibahu"]
+
+[sub_resource type="CapsuleShape3D" id="capsule"]
+radius = 0.3
+height = 1.4
+
+[sub_resource type="ProceduralSkyMaterial" id="sky_mat"]
+sky_top_color = Color(0.42, 0.62, 0.9, 1)
+sky_horizon_color = Color(0.76, 0.84, 0.92, 1)
+ground_bottom_color = Color(0.5, 0.55, 0.45, 1)
+ground_horizon_color = Color(0.76, 0.84, 0.92, 1)
+
+[sub_resource type="Sky" id="sky"]
+sky_material = SubResource("sky_mat")
+
+[sub_resource type="Environment" id="env"]
+background_mode = 2
+sky = SubResource("sky")
+ambient_light_source = 3
+tonemap_mode = 2
+
+[node name="Main" type="Node3D"]
+script = ExtResource("1_main")
+
+[node name="SmokeTimer" type="Timer" parent="."]
+wait_time = 2.0
+one_shot = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("env")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+shadow_enabled = true
+directional_shadow_max_distance = 40.0
+
+[node name="World" type="Node3D" parent="."]
+script = ExtResource("6_world")
+
+[node name="Player" type="CharacterBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 0)
+script = ExtResource("2_player")
+
+[node name="Capsule" type="CollisionShape3D" parent="Player"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.7, 0)
+shape = SubResource("capsule")
+
+[node name="Shibahu" parent="Player" instance=ExtResource("7_shibahu")]
+
+[node name="CameraPivot" type="Node3D" parent="Player"]
+script = ExtResource("3_camrig")
+
+[node name="SpringArm" type="SpringArm3D" parent="Player/CameraPivot"]
+spring_length = 4.4
+margin = 0.2
+
+[node name="Camera" type="Camera3D" parent="Player/CameraPivot/SpringArm"]
+current = true
+fov = 65.0
+
+[node name="HUD" type="CanvasLayer" parent="."]
+script = ExtResource("5_hud")
+
+[node name="Joystick" type="Control" parent="HUD"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+script = ExtResource("4_stick")
+
+[node name="DIAG" type="Label" parent="HUD"]
+offset_left = 10.0
+offset_top = 10.0
+offset_right = 710.0
+offset_bottom = 44.0
+text = "boot..."
+
+[connection signal="timeout" from="SmokeTimer" to="." method="_on_smoke_timer_timeout"]

@@ -1,0 +1,33 @@
+; Engine configuration file.
+; Journey E-strafe — eksperimen movement + joystick + kamera (kamera=char, jog-only)
+; Konfigurasi diwarisi dari ZDEV-RPG M0 (angka teruji UAT device) + kontrak E-strafe.
+
+config_version=5
+
+[application]
+
+config/name="Journey E-strafe"
+run/main_scene="res://scenes/main.tscn"
+config/features=PackedStringArray("4.7")
+
+[display]
+
+window/size/viewport_width=720
+window/size/viewport_height=1600
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
+window/handheld/orientation="portrait"
+
+[input_devices]
+
+pointing/emulate_touch_from_mouse=true
+
+[rendering]
+
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
+textures/vram_compression/import_etc2_astc=true
+textures/vram_compression/import_s3tc_bptc=false
+lights_and_shadows/directional_shadow/size=512
+anti_aliasing/quality/msaa_3d=0
+environment/defaults/default_clear_color=Color(0.55, 0.7, 0.85, 1)
