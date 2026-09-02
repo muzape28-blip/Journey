@@ -46,3 +46,12 @@ hybridindie, alexmeckes runtime-input+screenshot, IvanMurzak +SKILL.md gen);
 sandbox TIDAK bisa download biner Godot (github/tuxfamily diblokir) → jalur
 native yg hidup hari ini = GitHub Actions + barichello/godot-ci (repo publik
 gratis) export Web/APK headless, artifact diunduh user di HP.
+16:28:43 WIB
+
+=== 2026-09-02 — Sesi riset 45+ menit: ZDEV-RPG postmortem + movement/kamera (Godot) ===
+- Engine LOCKED: Godot (pilihan user). ZDEV-RPG = gudang aset+riset, 1 commit, nol playable → gagal di eksekusi, bukan di riset.
+- Aset ZDEV: desert.fbx 66.779 tris ±9.780 unit (≈195m jika cm), Hair.fbx 6.091 tris, Standing Dodge Forward.fbx = Mixamo Arissa (mixamorig×439), Texture.rar tak terbuka di sandbox.
+- Gerakan: speed=3 angka (UE: 600/2048/2000 cm); demo Godot MAX_SPEED 6 ACCEL/DEACCEL 14 snap-turn 140° jump-variable; mocap walk 0.6–1.1 jog 1.7–2.2 run 2.8–3.3 sprint 4.2+ m/s; decel>accel; coyote 0.1s/buffer 0.1s (Celeste 6/4 frame); Godot floor_max_angle 45° snap 0.1; hybrid in-place locomotion + root-motion dodge; BlendSpace1D blend_position=kecepatan terukur.
+- Kamera: SpringArm3D (margin/exclude), pivot+2Y length 3; demo follow_camera 3-ray autoturn 25°/50°s; damped spring ζ=1 (Juckett, kode diverifikasi); FOV: Godot fov=VERTIKAL (keep_aspect KEEP_HEIGHT) → di 20:9 pakai vertikal 45–48° biar horizontal ≈85–90°.
+- Device: Infinix Smart 9 HD = Helio G50 (8×A53 64-bit!) + PowerVR GE8320 + 3GB + Android 14 Go → renderer Compatibility (GLES3), 30fps stabil, APK sideload via CI godot-ci.
+- Laporan lengkap: riset_movement_kamera_logika_godot.md (label bukti + gap jujur).
