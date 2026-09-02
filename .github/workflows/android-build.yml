@@ -1,6 +1,11 @@
 # PENTING: salin isi file ini ke .github/workflows/android-build.yml via web UI
-# (GitHub App sandbox tidak punya izin `workflows` — blocker yang sama seperti ZDEV).
-# Status: [PERLU-VERIFIKASI-CI] — belum pernah dijalankan di repo ini.
+# (GitHub App sandbox tidak punya izin `workflows`).
+# v2 — perbaikan CI merah 2026-09-02:
+#   - template export disalin dari /root → $HOME (fix "No export template found"),
+#     fallback unduh .tpz resmi bila /root kosong.
+#   - java_sdk_path + debug keystore disuntik ke editor settings
+#     (fix "A valid Java SDK path is required") — resep godot-ci issue #151.
+#   - fontconfig dipasang (menghapus spam error font, kosmetik).
 name: Android APK (E-strafe)
 
 on:
@@ -17,17 +22,52 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Siapkan direktori
+      - name: Setup (templates + java + fontconfig)
         run: |
-          mkdir -p build ~/.local/share/godot/export_templates
+          set -e
+          apt-get update -qq > /dev/null && apt-get install -y -qq fontconfig > /dev/null || true
+          GODOT_VER=$(godot --headless --version | cut -d'.' -f1-3)
+          echo "Godot terdeteksi: $GODOT_VER"
+          mkdir -p ~/.local/share/godot/export_templates ~/.config/godot ~/.android
+          if [ -d "/root/.local/share/godot/export_templates/${GODOT_VER}.stable" ]; then
+            cp -r "/root/.local/share/godot/export_templates/${GODOT_VER}.stable" ~/.local/share/godot/export_templates/
+          else
+            wget -q "https://github.com/godotengine/godot/releases/download/${GODOT_VER}-stable/Godot_v${GODOT_VER}-stable_export_templates.tpz" -O /tmp/tpz
+            mkdir -p ~/.local/share/godot/export_templates/${GODOT_VER}.stable
+            unzip -j -q /tmp/tpz "templates/android_debug.apk" "templates/android_release.apk" -d ~/.local/share/godot/export_templates/${GODOT_VER}.stable/
+          fi
+          ls ~/.local/share/godot/export_templates/${GODOT_VER}.stable | head -5
+          if [ ! -f ~/.android/debug.keystore ]; then
+            keytool -genkeypair -keystore ~/.android/debug.keystore -storepass android \
+              -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 \
+              -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
+          fi
+          ES=~/.config/godot/editor_settings-4.tres
+          if [ -f /root/.config/godot/editor_settings-4.tres ]; then
+            cp /root/.config/godot/editor_settings-4.tres $ES
+          fi
+          if [ ! -f $ES ]; then
+            printf '[godot_resource type="EditorSettings" format=3]\n\n[resource]\n' > $ES
+          fi
+          JAVA_DIR=$(dirname "$(dirname "$(readlink -f "$(command -v java)")")")
+          {
+            echo "export/android/java_sdk_path = \"$JAVA_DIR\""
+            echo "export/android/debug_keystore = \"$HOME/.android/debug.keystore\""
+            echo "export/android/debug_keystore_user = \"androiddebugkey\""
+            echo "export/android/debug_keystore_pass = \"android\""
+          } >> $ES
+          cp $ES ~/.config/godot/editor_settings-${GODOT_VER%.*}.tres
+          echo "JAVA_HOME=$JAVA_DIR" >> "$GITHUB_ENV"
 
       - name: Import aset (headless)
         run: |
-          godot --headless --import --path . || true
+          mkdir -p build
+          godot --headless --path . --import || true
 
       - name: Export APK (debug, armv7)
         run: |
           godot --headless --path . --export-debug "Android" build/Estrafe.apk
+          ls -la build/
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
