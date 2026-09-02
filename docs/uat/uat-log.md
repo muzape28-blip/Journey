@@ -22,3 +22,9 @@ Format: `#nomor | build | cek | hasil (✅/❌) | catatan`
 ## Knob yang boleh dibumbui (S3)
 `JOG_SPEED`, `ACCEL`, `DECEL`, `TURN_RATE`, `sens` kamera, `DZ`, `BASE_R`,
 `orient_fix_deg`, `play_rate`, arah tanda yaw/pitch di camera_rig.
+
+## Catatan Perangkat (kesaksian user 2026-09-02)
+- Infinix Smart 9 HD: **diesi arm64, OS jalan 32-bit** → APK wajib punya slice armv7;
+  build universal (armv7+arm64) dipilih biar aman dua arah.
+- Install gagal pertama (toast "tidak dapat menginstal"): tersangka = unduhan
+  artifact-zip korup di 4G lambat; perbaikan v3 = rilis .apk mentah + cocokkan byte.
