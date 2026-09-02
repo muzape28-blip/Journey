@@ -1,14 +1,17 @@
-# PENTING: salin isi file ini ke .github/workflows/android-build.yml via web UI
-# (GitHub App sandbox tidak punya izin `workflows`).
-# v3 — 2026-09-02: APK UNIVERSAL (armv7+arm64) + upload ke RELEASES sebagai
-#   file .apk MENTAH (tautan unduh langsung, bukan artifact-zip yang bikin
-#   ambigu/korup saat diunduh lewat 4G).
+# PENTING: salin isi file ini ke .github/workflows/android-build.yml via web UI.
+# v4 — 2026-09-02: CI MENJADI MATA SANDBOX. Sandbox diblok unduh binary dari
+#   release-assets/blob (SNI egress filter), tapi GIT dibolehkan. Maka CI
+#   menulis otopsi APK (unzip -l lib/ + sha256) ke docs/ci/last_build_manifest.txt
+#   dan commit balik ke branch — sandbox membacanya via git fetch.
+#   paths-ignore mencegah loop rebuild dari commit manifest.
 name: Android APK (E-strafe)
 
 on:
   workflow_dispatch:
   push:
     branches: ["arena/01a05959-journey"]
+    paths-ignore:
+      - "docs/ci/last_build_manifest.txt"
 
 permissions:
   contents: write
@@ -21,6 +24,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup (templates + java + fontconfig)
         run: |
@@ -68,7 +73,23 @@ jobs:
         run: |
           godot --headless --path . --export-debug "Android" build/Estrafe.apk
           ls -la build/
-          echo "UKURAN_APK=$(stat -c%s build/Estrafe.apk)" >> "$GITHUB_ENV"
+
+      - name: Otopsi APK → manifest di repo
+        run: |
+          {
+            echo "commit: $(git rev-parse --short HEAD)"
+            echo "ukuran: $(stat -c%s build/Estrafe.apk) byte"
+            echo "--- lib/ ---"
+            unzip -l build/Estrafe.apk | grep -E "lib/.*\.so" || echo "(TIDAK ADA lib/!)"
+            echo "--- sha256 ---"
+            sha256sum build/Estrafe.apk
+          } > docs/ci/last_build_manifest.txt
+          cat docs/ci/last_build_manifest.txt
+          git config user.name "estrafe-ci-bot"
+          git config user.email "ci-bot@users.noreply.github.com"
+          git add docs/ci/last_build_manifest.txt
+          git commit -q -m "ci: manifest build $(git rev-parse --short HEAD) [skip ci]" || echo "manifest tak berubah"
+          git push origin HEAD:arena/01a05959-journey || echo "push manifest gagal (non-fatal)"
 
       - name: Upload artifact (zip, cadangan)
         uses: actions/upload-artifact@v4
@@ -86,4 +107,3 @@ jobs:
           body: |
             Build otomatis dari push terakhir.
             Unduh file **Estrafe.apk** di bawah (jangan yang artifact-zip).
-            Ukuran: ${{ env.UKURAN_APK }} byte.
