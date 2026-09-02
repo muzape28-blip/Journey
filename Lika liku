@@ -90,3 +90,6 @@ gratis) export Web/APK headless, artifact diunduh user di HP.
   "architectures/arm64-v8a", source export_plugin.cpp L703/2224); kunci asing
   diabaikan diam-diam → default = arm64 SAJA → OS 32-bit menolak. ZDEV aman
   karena pakai kunci benar. Diperbaiki + push (build otomatis).
+- 2026-09-03: ORIENTASI DIPATENKAN LANDSCAPE (1600x720, orientation=0, fov 55).
+  Keputusan user; riset mendukung (game aksi + virtual controller = landscape;
+  portrait cocok casual/one-hand). Portrait ZDEV ternyata bukan patokan genre.

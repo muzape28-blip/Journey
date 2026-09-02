@@ -12,11 +12,13 @@ config/features=PackedStringArray("4.7")
 
 [display]
 
-window/size/viewport_width=720
-window/size/viewport_height=1600
+window/size/viewport_width=1600
+window/size/viewport_height=720
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
-window/handheld/orientation=1
+; LOCKED LANDSCAPE (keputusan user 2026-09-03; genre ARPG third-person =
+; landscape, riset r/gamedesign & r/AndroidGaming). enum: 0=landscape.
+window/handheld/orientation=0
 
 [input_devices]
 
