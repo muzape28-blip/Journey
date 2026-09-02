@@ -1,17 +1,17 @@
 # PENTING: salin isi file ini ke .github/workflows/android-build.yml via web UI
 # (GitHub App sandbox tidak punya izin `workflows`).
-# v2 — perbaikan CI merah 2026-09-02:
-#   - template export disalin dari /root → $HOME (fix "No export template found"),
-#     fallback unduh .tpz resmi bila /root kosong.
-#   - java_sdk_path + debug keystore disuntik ke editor settings
-#     (fix "A valid Java SDK path is required") — resep godot-ci issue #151.
-#   - fontconfig dipasang (menghapus spam error font, kosmetik).
+# v3 — 2026-09-02: APK UNIVERSAL (armv7+arm64) + upload ke RELEASES sebagai
+#   file .apk MENTAH (tautan unduh langsung, bukan artifact-zip yang bikin
+#   ambigu/korup saat diunduh lewat 4G).
 name: Android APK (E-strafe)
 
 on:
   workflow_dispatch:
   push:
     branches: ["arena/01a05959-journey"]
+
+permissions:
+  contents: write
 
 jobs:
   export-android:
@@ -64,13 +64,26 @@ jobs:
           mkdir -p build
           godot --headless --path . --import || true
 
-      - name: Export APK (debug, armv7)
+      - name: Export APK (debug, universal armv7+arm64)
         run: |
           godot --headless --path . --export-debug "Android" build/Estrafe.apk
           ls -la build/
+          echo "UKURAN_APK=$(stat -c%s build/Estrafe.apk)" >> "$GITHUB_ENV"
 
-      - name: Upload artifact
+      - name: Upload artifact (zip, cadangan)
         uses: actions/upload-artifact@v4
         with:
           name: e-strafe-apk
           path: build/*.apk
+
+      - name: Rilis .apk mentah (tautan unduh langsung)
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: e-strafe-latest
+          name: "E-strafe APK (auto)"
+          prerelease: true
+          files: build/Estrafe.apk
+          body: |
+            Build otomatis dari push terakhir.
+            Unduh file **Estrafe.apk** di bawah (jangan yang artifact-zip).
+            Ukuran: ${{ env.UKURAN_APK }} byte.
