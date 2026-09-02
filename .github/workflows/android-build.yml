@@ -1,14 +1,17 @@
-# PENTING: salin isi file ini ke .github/workflows/android-build.yml via web UI
-# (GitHub App sandbox tidak punya izin `workflows`).
-# v3 — 2026-09-02: APK UNIVERSAL (armv7+arm64) + upload ke RELEASES sebagai
-#   file .apk MENTAH (tautan unduh langsung, bukan artifact-zip yang bikin
-#   ambigu/korup saat diunduh lewat 4G).
+# PENTING: salin isi file ini ke .github/workflows/android-build.yml via web UI.
+# v5 — 2026-09-03: + RUNTIME SMOKE HEADLESS: CI menjalankan scene utama
+#   headless ~4 detik; log BOOT-x/HUD-ALIVE/SCRIPT ERROR di-commit balik ke
+#   docs/ci/last_build_manifest.txt + docs/ci/runtime_smoke.log supaya sandbox
+#   (yang tak bisa unduh binary/log CI) bisa membaca nasib runtime via git.
 name: Android APK (E-strafe)
 
 on:
   workflow_dispatch:
   push:
     branches: ["arena/01a05959-journey"]
+    paths-ignore:
+      - "docs/ci/last_build_manifest.txt"
+      - "docs/ci/runtime_smoke.log"
 
 permissions:
   contents: write
@@ -21,6 +24,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup (templates + java + fontconfig)
         run: |
@@ -64,11 +69,33 @@ jobs:
           mkdir -p build
           godot --headless --path . --import || true
 
-      - name: Export APK (debug, universal armv7+arm64)
+      - name: Runtime smoke headless (log masuk repo)
+        run: |
+          timeout 30 godot --headless --path . res://scenes/main.tscn --quit-after 240 > docs/ci/runtime_smoke.log 2>&1 || true
+          echo "=== SMOKE LOG ==="
+          cat docs/ci/runtime_smoke.log
+
+      - name: Export APK (debug, universal)
         run: |
           godot --headless --path . --export-debug "Android" build/Estrafe.apk
           ls -la build/
-          echo "UKURAN_APK=$(stat -c%s build/Estrafe.apk)" >> "$GITHUB_ENV"
+
+      - name: Otopsi APK + smoke → commit balik
+        run: |
+          {
+            echo "commit: $(git rev-parse --short HEAD)"
+            echo "ukuran: $(stat -c%s build/Estrafe.apk) byte"
+            echo "--- lib/ ---"
+            unzip -l build/Estrafe.apk | grep -E "lib/.*\.so" || echo "(TIDAK ADA lib/!)"
+            echo "--- sha256 ---"
+            sha256sum build/Estrafe.apk
+          } > docs/ci/last_build_manifest.txt
+          cat docs/ci/last_build_manifest.txt
+          git config user.name "estrafe-ci-bot"
+          git config user.email "ci-bot@users.noreply.github.com"
+          git add docs/ci/last_build_manifest.txt docs/ci/runtime_smoke.log
+          git commit -q -m "ci: manifest+smoke build $(git rev-parse --short HEAD) [skip ci]" || echo "tak ada perubahan"
+          git push origin HEAD:arena/01a05959-journey || echo "push manifest gagal (non-fatal)"
 
       - name: Upload artifact (zip, cadangan)
         uses: actions/upload-artifact@v4
@@ -86,4 +113,3 @@ jobs:
           body: |
             Build otomatis dari push terakhir.
             Unduh file **Estrafe.apk** di bawah (jangan yang artifact-zip).
-            Ukuran: ${{ env.UKURAN_APK }} byte.
