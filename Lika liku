@@ -72,3 +72,16 @@ gratis) export Web/APK headless, artifact diunduh user di HP.
   hud (zona 50/50 lock-in), world_builder, main (merge 2 glb off-tree + sanitizer hips).
 - CI: docs/ci/android-build.yml [PERLU-VERIFIKASI-CI] — user paste ke .github/workflows.
 - BELUM diverifikasi runtime (sandbox tanpa Godot) → gerbang kebenaran = CI + UAT #1.
+
+## 2026-09-02 — Peta internet sandbox (empiris, probing curl)
+- Lapis TOOLS (web_search/fetch_page): luas (proxy server-side).
+- Lapis SHELL whitelist: github.com, api.github.com, codeload.github.com,
+  pypi.org + files.pythonhosted.org, registry.npmjs.org.
+- SHELL diblok (SNI egress filter, TLS mati pasca-TCP): keluarga
+  *.githubusercontent.com (raw/release-assets/objects), *.blob.core.windows.net,
+  dan web umum (google/reddit/SO/cloudflare/godotengine/example).
+- DNS resolvi semua host → blokir di lapis TLS, bukan DNS. Bukan lib kurang/
+  broken pipe; perbaikan umum di internet (unset proxy, dsb.) utk mesin pribadi,
+  tak berlaku di sini.
+- Lorong data alternatif: git (CI commit manifest balik), codeload zip,
+  pip --break-system-packages (PIL 12.3.0 terpasang), npm registry.
