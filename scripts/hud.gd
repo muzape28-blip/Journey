@@ -16,6 +16,7 @@ var player: CharacterBody3D = null  # untuk DIAG (di-set main.gd)
 
 var _owners := {}   # event.index -> "stick" | "cam"
 var _diag_t := 0.0
+var _alive_printed := false
 
 
 func _input(event: InputEvent) -> void:
@@ -53,6 +54,9 @@ func _notification(what: int) -> void:
 
 
 func _process(delta: float) -> void:
+	if not _alive_printed:
+		_alive_printed = true
+		print("HUD-ALIVE: process jalan, joystick=", joystick != null)
 	_diag_t += delta
 	if _diag_t < 0.25:
 		return

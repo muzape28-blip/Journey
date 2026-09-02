@@ -36,23 +36,29 @@ const LOOP_ANIMS := ["idle", "jog_fwd", "jog_left", "jog_right", "jog_lean_r", "
 
 
 func _ready() -> void:
+	print("BOOT-1 sun")
 	$Sun.rotation_degrees = Vector3(-50.0, -35.0, 0.0)
+	print("BOOT-2 world.build() mulai")
 	$World.build()
+	print("BOOT-3 world selesai")
 
 	var ap := player.find_child("AnimationPlayer", true, false) as AnimationPlayer
 	if ap == null:
 		push_error("E-strafe: AnimationPlayer tidak ditemukan di instance Shibahu!")
 	else:
+		print("BOOT-4 animplayer ketemu, sanitasi+merge")
 		_sanitize_existing(ap)
 		_merge_v2(ap)
 		player.setup_player(ap)
+		print("BOOT-5 anim: ", _anim_list(ap))
 
 	hud.pivot_rig = $Player/CameraPivot
 	hud.player = player
 	hud.joystick.moved.connect(player.set_move_input)
+	print("BOOT-6 hud terkabel")
 
 	$SmokeTimer.start()
-	print("E-strafe S1 boot OK — anim: ", _anim_list(ap))
+	print("BOOT-7 smoke timer jalan")
 
 
 func _anim_list(ap: AnimationPlayer) -> Array:

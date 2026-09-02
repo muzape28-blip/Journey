@@ -33,6 +33,7 @@ func _ready() -> void:
 	set_anchors_preset(Control.PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	hint_center = Vector2(160.0, size.y - 200.0)
+	print("JOYSTICK-READY size=", size, " hint=", hint_center)
 
 
 func _notification(what: int) -> void:

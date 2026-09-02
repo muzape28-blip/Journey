@@ -1,9 +1,8 @@
 # PENTING: salin isi file ini ke .github/workflows/android-build.yml via web UI.
-# v4 — 2026-09-02: CI MENJADI MATA SANDBOX. Sandbox diblok unduh binary dari
-#   release-assets/blob (SNI egress filter), tapi GIT dibolehkan. Maka CI
-#   menulis otopsi APK (unzip -l lib/ + sha256) ke docs/ci/last_build_manifest.txt
-#   dan commit balik ke branch — sandbox membacanya via git fetch.
-#   paths-ignore mencegah loop rebuild dari commit manifest.
+# v5 — 2026-09-03: + RUNTIME SMOKE HEADLESS: CI menjalankan scene utama
+#   headless ~4 detik; log BOOT-x/HUD-ALIVE/SCRIPT ERROR di-commit balik ke
+#   docs/ci/last_build_manifest.txt + docs/ci/runtime_smoke.log supaya sandbox
+#   (yang tak bisa unduh binary/log CI) bisa membaca nasib runtime via git.
 name: Android APK (E-strafe)
 
 on:
@@ -12,6 +11,7 @@ on:
     branches: ["arena/01a05959-journey"]
     paths-ignore:
       - "docs/ci/last_build_manifest.txt"
+      - "docs/ci/runtime_smoke.log"
 
 permissions:
   contents: write
@@ -69,12 +69,18 @@ jobs:
           mkdir -p build
           godot --headless --path . --import || true
 
-      - name: Export APK (debug, universal armv7+arm64)
+      - name: Runtime smoke headless (log masuk repo)
+        run: |
+          timeout 30 godot --headless --path . res://scenes/main.tscn --quit-after 240 > docs/ci/runtime_smoke.log 2>&1 || true
+          echo "=== SMOKE LOG ==="
+          cat docs/ci/runtime_smoke.log
+
+      - name: Export APK (debug, universal)
         run: |
           godot --headless --path . --export-debug "Android" build/Estrafe.apk
           ls -la build/
 
-      - name: Otopsi APK → manifest di repo
+      - name: Otopsi APK + smoke → commit balik
         run: |
           {
             echo "commit: $(git rev-parse --short HEAD)"
@@ -87,8 +93,8 @@ jobs:
           cat docs/ci/last_build_manifest.txt
           git config user.name "estrafe-ci-bot"
           git config user.email "ci-bot@users.noreply.github.com"
-          git add docs/ci/last_build_manifest.txt
-          git commit -q -m "ci: manifest build $(git rev-parse --short HEAD) [skip ci]" || echo "manifest tak berubah"
+          git add docs/ci/last_build_manifest.txt docs/ci/runtime_smoke.log
+          git commit -q -m "ci: manifest+smoke build $(git rev-parse --short HEAD) [skip ci]" || echo "tak ada perubahan"
           git push origin HEAD:arena/01a05959-journey || echo "push manifest gagal (non-fatal)"
 
       - name: Upload artifact (zip, cadangan)
