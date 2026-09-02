@@ -78,7 +78,7 @@
 
 ### 3.2 Walking vs jogging vs running vs sprint — desain transisi
 
-- **Analog magnitude mapping**: kecepatan = fungsi kemiringan joystick (velocity-control: makin jauh dari pusat makin cepat) `[ARTIKEL riset York Univ. Tilt-Touch Synergy]`; Genshin console: "slightly tilt left analog stick" = walk, penuh = run `[RESMI GameWith control guide]`; di mobile Genshin ada toggle run/walk terpisah + tombol sprint `[RESMI sama]`. Pola kita: deadzone 0.15 → tilt memetakan walk→run; sprint = tombol/hold atau tilt >0.9.
+- **Analog magnitude mapping**: kecepatan = fungsi kemiringan joystick (velocity-control: makin jauh dari pusat makin cepat) `[ARTIKEL riset York Univ. Tilt-Touch Synergy]`; Genshin console: "slightly tilt left analog stick" = walk, penuh = run `[WIKI — GameWith control guide, mendokumentasikan perilaku in-game]`; di mobile Genshin ada toggle run/walk terpisah + tombol sprint `[WIKI sama]`. Pola kita: deadzone 0.15 → tilt memetakan walk→run; sprint = tombol/hold atau tilt >0.9.
 - **Blend space minimal 3 tier bersih** `[ARTIKEL mocaponline]`: idle@0, walk@~1.5–2, jog/run@~3–4, sprint@~5–6 (dalam m/s Godot); posisi klip = kecepatan aktual yang diukur dari jarak-per-siklus animasi; jika klip "terlihat 8 m/s" dipasang di 5 m/s → foot sliding.
 - **Sprint + stamina** `[ARTIKEL tutorial UE5]`: walk 300 / sprint 600 cm/s; drain tick 0.1–0.2 s; upgrade wajib: recovery delay setelah stop, blokir sprint sampai stamina di atas threshold, drain hanya saat benar-benar bergerak, state "lelah". Untuk vertikal slice v1 kita: sprint tanpa stamina dulu (jaga scope), stamina masuk babak combat.
 
