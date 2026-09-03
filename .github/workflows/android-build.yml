@@ -1,5 +1,6 @@
 # PENTING: salin isi file ini ke .github/workflows/android-build.yml via web UI.
-# v5 — 2026-09-03: + RUNTIME SMOKE HEADLESS: CI menjalankan scene utama
+# v6 — 2026-09-03: + git safe.directory (container CI menolak repo
+#   'dubious ownership' -> langkah commit manifest mati 128, release tertahan). + RUNTIME SMOKE HEADLESS: CI menjalankan scene utama
 #   headless ~4 detik; log BOOT-x/HUD-ALIVE/SCRIPT ERROR di-commit balik ke
 #   docs/ci/last_build_manifest.txt + docs/ci/runtime_smoke.log supaya sandbox
 #   (yang tak bisa unduh binary/log CI) bisa membaca nasib runtime via git.
@@ -82,6 +83,8 @@ jobs:
 
       - name: Otopsi APK + smoke → commit balik
         run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE" || true
+          git config --global --add safe.directory '*' || true
           {
             echo "commit: $(git rev-parse --short HEAD)"
             echo "ukuran: $(stat -c%s build/Estrafe.apk) byte"
