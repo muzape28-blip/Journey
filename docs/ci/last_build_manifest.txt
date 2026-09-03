@@ -1,9 +1,9 @@
-commit: 53580c5
+commit: 483ea42
 ukuran: 194426947 byte
 --- lib/ ---
-  1374336  2026-09-03 20:48   lib/arm64-v8a/libc++_shared.so
- 76181608  2026-09-03 20:48   lib/arm64-v8a/libgodot_android.so
-   963028  2026-09-03 20:48   lib/armeabi-v7a/libc++_shared.so
- 82451424  2026-09-03 20:48   lib/armeabi-v7a/libgodot_android.so
+  1374336  2026-09-03 20:52   lib/arm64-v8a/libc++_shared.so
+ 76181608  2026-09-03 20:52   lib/arm64-v8a/libgodot_android.so
+   963028  2026-09-03 20:52   lib/armeabi-v7a/libc++_shared.so
+ 82451424  2026-09-03 20:52   lib/armeabi-v7a/libgodot_android.so
 --- sha256 ---
-429142b315a20ddf83e08d21bd4b4840bec66b13db7485d481cb9bf6d847bcab  build/Estrafe.apk
+1fc189d4aa64f8cf30a96daaadcf4c6e1aa73e69b53c54f73305585c79aed42f  build/Estrafe.apk
