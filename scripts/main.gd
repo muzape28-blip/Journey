@@ -71,14 +71,30 @@ func _anim_list(ap: AnimationPlayer) -> Array:
 
 
 func _sanitize_existing(ap: AnimationPlayer) -> void:
+	# dst library tempat nama-nama mapped hidup.
+	var dst: AnimationLibrary
+	if ap.has_animation_library(""):
+		dst = ap.get_animation_library("")
+	else:
+		dst = AnimationLibrary.new()
+		ap.add_animation_library("", dst)
 	for lib_name in ap.get_animation_library_list():
 		var lib := ap.get_animation_library(lib_name)
-		for n in lib.get_animation_list():
+		var originals := lib.get_animation_list()
+		for n in originals:
 			var anim := lib.get_animation(n)
 			_freeze_hips_xz(anim)
 			var mapped: String = NAME_MAP.get(n, "")
 			if mapped in LOOP_ANIMS:
 				anim.loop_mode = Animation.LOOP_LINEAR
+			if mapped != "" and not dst.has_animation(mapped):
+				dst.add_animation(mapped, anim)
+				if lib != dst:
+					lib.remove_animation(n)
+				elif n != mapped:
+					# hapus nama asli dari library yang sama (iterasi aman:
+					# list sudah disalin duluan).
+					lib.remove_animation(n)
 
 
 func _merge_v2(ap: AnimationPlayer) -> void:
