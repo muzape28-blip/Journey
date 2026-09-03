@@ -22,7 +22,7 @@ var _idx := -1
 
 func _ready() -> void:
 	top_level = true
-	$SpringArm.add_collision_exception_with(get_parent())
+	$SpringArm.add_excluded_object(get_parent())
 	print("CAMRIG-READY top_level=true")
 
 

@@ -63,9 +63,9 @@ func on_drag(pos: Vector2, idx: int) -> void:
 		# Base ikut meluncur — jempol tidak pernah "ketinggalan".
 		_origin = pos - d.normalized() * clen
 		d = pos - _origin
-	var mag := min(d.length() / BASE_R, 1.0)
+	var mag: float = minf(d.length() / BASE_R, 1.0)
 	var dir := d.normalized() if mag > 0.0001 else Vector2.ZERO
-	var scaled := clamp((mag - DZ) / (1.0 - DZ), 0.0, 1.0)
+	var scaled: float = clampf((mag - DZ) / (1.0 - DZ), 0.0, 1.0)
 	# Layar: atas = -y. Kontrak kita: maju = +y → balik.
 	_vec = Vector2(dir.x, -dir.y) * scaled
 	moved.emit(_vec)

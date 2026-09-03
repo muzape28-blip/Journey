@@ -110,7 +110,7 @@ func _merge_v2(ap: AnimationPlayer) -> void:
 func _freeze_hips_xz(anim: Animation) -> void:
 	# Bekukan translasi Hips di X/Z pada nilai key pertama; Y (bob) tetap hidup.
 	for t in anim.get_track_count():
-		if anim.track_get_type(t) != Animation.TYPE_VECTOR3:
+		if anim.track_get_type(t) != Animation.TYPE_POSITION_3D:
 			continue
 		var path := String(anim.track_get_path(t))
 		if not (path.ends_with("Hips:position") or path.ends_with("Hips:xform")):

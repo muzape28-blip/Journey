@@ -62,9 +62,12 @@ func _process(delta: float) -> void:
 		return
 	_diag_t = 0.0
 	var v := 0.0
-	var a := "-"
 	if player:
 		v = Vector2(player.velocity.x, player.velocity.z).length()
+	var jv := Vector2.ZERO
+	var rawv = joystick.get("_vec")
+	if rawv is Vector2:
+		jv = rawv
 	diag.text = "fps %d | v %.2f m/s | stick (%.2f, %.2f)" % [
-		Engine.get_frames_per_second(), v, joystick._vec.x, joystick._vec.y
+		Engine.get_frames_per_second(), v, jv.x, jv.y
 	]
