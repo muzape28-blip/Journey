@@ -20,7 +20,7 @@ const GRAV := 20.0          # m/s^2 (ZDEV)
 const FALL_CLAMP := -30.0
 const TURN_RATE := 10.0     # rad/s lerp badan → yaw kamera
 
-@export var orient_fix_deg := 0.0   # putar mesh bila Shibahu menghadap arah salah (knob UAT)
+@export var orient_fix_deg := 180.0  # mesh mixamorig menghadap +Z; Godot -Z → koreksi 180 (riset 2026-09-03)
 @export var play_rate := 1.0        # kecepatan pemutaran klip (kalibrasi foot-slide)
 
 var move_input := Vector2.ZERO      # x = kanan(+), y = MAJU(+). Di-set oleh joystick via HUD.
