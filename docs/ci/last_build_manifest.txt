@@ -1,0 +1,9 @@
+commit: dcdd2d9
+ukuran: 169506807 byte
+--- lib/ ---
+  1374336  2026-09-03 09:22   lib/arm64-v8a/libc++_shared.so
+ 76181608  2026-09-03 09:22   lib/arm64-v8a/libgodot_android.so
+   963028  2026-09-03 09:22   lib/armeabi-v7a/libc++_shared.so
+ 82451424  2026-09-03 09:22   lib/armeabi-v7a/libgodot_android.so
+--- sha256 ---
+29cda33e464a0078b0be5d87ece14fa9bcc43273369a55424924439254596c77  build/Estrafe.apk
