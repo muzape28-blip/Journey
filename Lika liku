@@ -99,3 +99,9 @@ gratis) export Web/APK headless, artifact diunduh user di HP.
   super-low. tree.glb (2712 mesh) & alaskan (1M tris) DILARANG — catat di
   docs/harta_hp_gahar.md. Pelajaran audit: pohon Retro GLB "tidur" (tinggi di
   −Z) → rotation.x +90°; Euler YXZ menegakkan dulu baru yaw.
+- 2026-09-03 (S4): revisi UAT #2. Root-cause: audit S3 baca RAW POSITION bukan
+  node TRS — pohon Retro node-nya sudah berotasi +90°X (S3 menjungkalkan),
+  geranium tanpa scale node = 166 m (S3 raksasa 66 m). Fix: tilt pohon 0,
+  geranium 0.005 ×4; rumput 6000; kartu bunga kawaii ×40 (alpha-scssor);
+  sun 0.55 + ambient 0.35 (silau/tanah putih); BASE_R 95 (joystick responsif);
+  sens_y 0.008 + pitch −45..70 + telemetri PITCH-DRAG.

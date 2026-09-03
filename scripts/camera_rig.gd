@@ -9,8 +9,9 @@ extends Node3D
 ##   transform global-nya independen; tiap physics frame disetel ke posisi player.
 ##   Rotasi badan player TIDAK PERNAH bocor ke kamera → nol feedback loop.
 
-@export var sens := 0.005          # rad per piksel drag
-@export var pitch_min_deg := -35.0
+@export var sens := 0.005          # rad per piksel drag (yaw)
+@export var sens_y := 0.008        # S4: pitch lebih responsif (UAT #2)
+@export var pitch_min_deg := -45.0 # S4: -35 → -45 (lebih leluasa lihat tanah)
 @export var pitch_max_deg := 70.0  # S3: dongak sampai langit (user buru aset awan)
 @export var eye_height := 1.45     # tinggi mata di atas kaki player
 
@@ -18,6 +19,7 @@ var yaw := 0.0
 var pitch := -8.0                  # sedikit menunduk, enak buat lihat kaki & tanah
 
 var _idx := -1
+var _pitch_logged := false         # telemetri smoke: bukti drag vertikal jalan
 
 
 func _ready() -> void:
@@ -46,7 +48,10 @@ func on_drag(ev: InputEventScreenDrag) -> void:
 	# sebelumnya kamera malah mengorbit kiri — keluhan user).
 	# Drag atas → pitch naik → mendongak ke langit (dome sky.glb).
 	yaw -= ev.relative.x * sens
-	pitch = clamp(pitch - ev.relative.y * sens, deg_to_rad(pitch_min_deg), deg_to_rad(pitch_max_deg))
+	pitch = clamp(pitch - ev.relative.y * sens_y, deg_to_rad(pitch_min_deg), deg_to_rad(pitch_max_deg))
+	if not _pitch_logged and absf(pitch - deg_to_rad(-8.0)) > 0.15:
+		_pitch_logged = true
+		print("PITCH-DRAG aktif: pitch=%.1f deg" % rad_to_deg(pitch))
 
 
 func on_up(ev: InputEventScreenTouch) -> void:

@@ -13,7 +13,8 @@ extends Control
 
 signal moved(v: Vector2)   # x = kanan(+), y = MAJU(+) — sudah dibalik dari koordinat layar
 
-const BASE_R := 120.0        # radius visual base @720p (ZDEV 105 +15% "lega")
+const BASE_R := 95.0         # S4: 120 → 95 (UAT: joystick "naikin sensitifitas
+                             # sedikit" — stick penuh tercapai lebih cepat)
 const CLAMP_MUL := 1.5       # clampzone = 180 px
 const KNOB_R := 30.0
 const HALO_R := 38.0

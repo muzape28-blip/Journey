@@ -13,9 +13,10 @@ extends Node3D
 ## alpha-fade (tidak ada popping/flicker di scissor).
 
 const GROUND_SIZE := 140.0     # S3: arena 60 → 140 m (keputusan user)
-const GRASS_R12_COUNT := 2000  # S3: 600 → 2000 (±2500 total, 2 draw call)
-const GRASS_07C_COUNT := 500   # S3: 150 → 500
+const GRASS_R12_COUNT := 4800  # S4: 2000 → 4800 (UAT: "rumput dikit")
+const GRASS_07C_COUNT := 1200  # S4: 500 → 1200 (total 6000, 2 draw call)
 const GRASS_RADIUS := 66.0     # S3: disk sebaran mengikuti arena baru
+const FLOWER_COUNT := 40       # S4: kartu bunga kawaii (super murah)
 const SEED := 1337             # deterministik — UAT bisa mereproduksi
 
 
@@ -32,6 +33,7 @@ func build() -> void:
 		Vector2(1.4, 1.1), GRASS_07C_COUNT
 	)
 	_build_props()
+	_build_flower_cards()
 	print("WORLD-S3: arena=%dm grass=%d props+sky terpasang" % [
 		GROUND_SIZE, GRASS_R12_COUNT + GRASS_07C_COUNT])
 
@@ -112,11 +114,13 @@ func _build_grass(albedo_path: String, alfa_path: String, card: Vector2, count: 
 	add_child(mmi)
 
 
-# ---- S3: props & skydome (harta karun user; diaudit biner 2026-09-03) ----
-# Hasil audit: rock_game_assets tinggi-Y 104 unit → skala 0.015–0.04;
-# pohon Retro GLB "tidur" (tinggi di −Z) → rotation.x +90° menegakkan;
-# geranium tinggi-Y 166 unit → skala 0.35–0.45; sky = bola radius 1 m
-# (doubleSided=true) → skala 300 + unlit.
+# ---- S3/S4: props & skydome (harta karun user; diaudit biner 2026-09-03) ----
+# Audit ulang S4 (node TRS, bukan raw POSITION!): pohon Retro punya rotasi
+# +90° X BAWAAN di node root → di Godot SUDAH berdiri; tilt tambahan +90°
+# tadi malah menjungkalkan (bug UAT #2 "pohon tidur"). Jadi tilt = 0.
+# Geranium TIDAK punya scale node → 166 unit = 166 m; skala 0.4 tadi =
+# raksasa 66 m (bug UAT #2). Skala benar ≈ 0.005 (±0.8 m).
+# rock_game_assets tinggi-Y 104 unit, tanpa scale node → 0.015–0.04 OK.
 
 func _build_props() -> void:
 	var rng := RandomNumberGenerator.new()
@@ -124,16 +128,21 @@ func _build_props() -> void:
 	_scatter("res://assets/rocks/rock_game_assets.glb", 10, rng,
 			0.015, 0.04, 8.0, 62.0, 0.0, true)
 	_scatter("res://assets/trees/tree_rt_1.glb", 6, rng,
-			4.0, 6.0, 12.0, 64.0, 90.0, false)
+			4.0, 6.0, 12.0, 64.0, 0.0, false)
 	_scatter("res://assets/trees/tree_rt_3.glb", 6, rng,
-			3.0, 5.0, 12.0, 64.0, 90.0, false)
+			3.0, 5.0, 12.0, 64.0, 0.0, false)
 	_scatter("res://assets/trees/small_tree_rt_1.glb", 8, rng,
-			0.8, 1.4, 6.0, 60.0, 90.0, false)
-	# Geranium: 2 aksen kawaii dekat spawn saja (95k tris — jangan disebar!).
+			0.8, 1.4, 6.0, 60.0, 0.0, false)
+	# Geranium asli: 4 aksen kawaii ukuran MANUSIAWI dekat spawn
+	# (95k tris each — tetap jangan disebar luas!).
 	_place("res://assets/props/geranium_flower.glb",
-			Vector3(2.2, 0.0, 1.6), 0.4, 0.0, false)
+			Vector3(2.2, 0.0, 1.6), 0.005, 0.0, false)
 	_place("res://assets/props/geranium_flower.glb",
-			Vector3(-2.5, 0.0, 2.1), 0.35, 0.0, false)
+			Vector3(-2.5, 0.0, 2.1), 0.0055, 0.0, false)
+	_place("res://assets/props/geranium_flower.glb",
+			Vector3(1.7, 0.0, -2.4), 0.005, 0.0, false)
+	_place("res://assets/props/geranium_flower.glb",
+			Vector3(-2.0, 0.0, -2.7), 0.006, 0.0, false)
 	_sky()
 
 
@@ -185,3 +194,45 @@ func _sky() -> void:
 			mat.set("shading_mode", 1)
 	add_child(inst)
 	print("SKY-READY scale=300 unlit")
+
+
+# ---- S4: kartu bunga kawaii (sprite alpha-scssor, 1 draw call) ----
+# Jawaban keluhan "bunga kok cuma dua & raksasa": geranium asli dipakai
+# sedikit sebagai aksen, BANYAK bunga murah pakai kartu sprite ini.
+func _build_flower_cards() -> void:
+	var tex: Texture2D = load("res://assets/props/flower_card.png")
+	if tex == null:
+		push_warning("E-strafe: flower_card.png hilang")
+		return
+	var mat := StandardMaterial3D.new()
+	mat.albedo_texture = tex
+	mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+	# Scissor (bukan blend) — alasan sama seperti rumput: TBDR GE8320.
+	mat.alpha_scissor_enabled = true
+	mat.alpha_scissor_threshold = 0.45
+
+	var quad := QuadMesh.new()
+	quad.size = Vector2(0.55, 0.65)
+	quad.center_offset = Vector3(0.0, 0.32, 0.0)
+
+	var mm := MultiMesh.new()
+	mm.transform_format = MultiMesh.TRANSFORM_3D
+	mm.mesh = quad
+	mm.instance_count = FLOWER_COUNT
+	var rng := RandomNumberGenerator.new()
+	rng.seed = SEED + 99
+	for i in FLOWER_COUNT:
+		var ang := rng.randf() * TAU
+		var rad := rng.randf_range(2.5, 40.0)
+		var pos := Vector3(cos(ang) * rad, 0.0, sin(ang) * rad)
+		var yaw := rng.randf() * TAU
+		var s := rng.randf_range(0.8, 1.4)
+		var basis := Basis(Vector3.UP, yaw).scaled(Vector3(s, s, s))
+		mm.set_instance_transform(i, Transform3D(basis, pos))
+	var mmi := MultiMeshInstance3D.new()
+	mmi.multimesh = mm
+	mmi.material_override = mat
+	mmi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	mmi.name = "FlowerCards"
+	add_child(mmi)
+	print("FLOWER-CARDS: %d kartu kawaii" % FLOWER_COUNT)
