@@ -5,7 +5,14 @@ JOYSTICK-READY size=(1600.0, 1600.0) hint=(160.0, 1400.0)
 BOOT-1 sun
 BOOT-2 world.build() mulai
 SKY-READY scale=300 unlit
-WORLD-S3: arena=140m grass=2500 props+sky terpasang
+WARNING: Godot 3.x SpatialMaterial remapped parameter not found: alpha_scissor_enabled
+     at: _set (scene/resources/material.cpp:4096)
+     GDScript backtrace (most recent call first):
+         [0] _build_flower_cards (res://scripts/world_builder.gd:211)
+         [1] build (res://scripts/world_builder.gd:36)
+         [2] _ready (res://scripts/main.gd:42)
+FLOWER-CARDS: 40 kartu kawaii
+WORLD-S3: arena=140m grass=6000 props+sky terpasang
 BOOT-3 world selesai
 BOOT-4 animplayer ketemu, sanitasi+merge
 BOOT-5 anim: [&"dodge_l", &"dodge_r", &"idle", &"jog_fwd", &"jog_lean_r", &"jog_left", &"jog_right", &"sit_enter", &"sit_exit", &"sit_idle", &"sprint", &"sprint_exit"]
