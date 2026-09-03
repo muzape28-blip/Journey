@@ -3,7 +3,9 @@ shader_type spatial;
 // di GPU TBDR kelas GE8320 [riset: r/godot 2023, godot-proposals #7366].
 // Angin = goyangan vertex sederhana (murah, tanpa tekstur noise).
 // Fade jarak = "tenggelam ke tanah" (lebih bersih dari alpha-fade di scissor).
-render_mode alpha_scissor(0.5), cull_disabled, specular_disabled;
+// Cutout biner via discard di fragment (alpha_scissor BUKAN render mode
+// shader di 4.7; itu properti StandardMaterial3D). Piksel dibuang = murah.
+render_mode cull_disabled, specular_disabled;
 
 uniform sampler2D albedo_tex : source_color, filter_linear_mipmap;
 uniform sampler2D alpha_tex : filter_linear_mipmap;
@@ -24,7 +26,10 @@ void vertex() {
 void fragment() {
 	vec4 c = texture(albedo_tex, UV);
 	float a = texture(alpha_tex, UV).r;
+	if (a < 0.45) {
+		discard;
+	}
 	ALBEDO = c.rgb;
 	ROUGHNESS = 0.9;
-	ALPHA = a;
+	ALPHA = 1.0;
 }

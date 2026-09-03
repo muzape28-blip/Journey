@@ -92,6 +92,13 @@ func _merge_v2(ap: AnimationPlayer) -> void:
 		push_error("E-strafe: v2 tidak punya AnimationPlayer!")
 		inst.free()
 		return
+	# add_animation ada di AnimationLIBRARY, bukan di player.
+	var dst: AnimationLibrary
+	if ap.has_animation_library(""):
+		dst = ap.get_animation_library("")
+	else:
+		dst = AnimationLibrary.new()
+		ap.add_animation_library("", dst)
 	for lib_name in src.get_animation_library_list():
 		var lib := src.get_animation_library(lib_name)
 		for n in lib.get_animation_list():
@@ -103,7 +110,7 @@ func _merge_v2(ap: AnimationPlayer) -> void:
 			_freeze_hips_xz(anim)
 			if mapped in LOOP_ANIMS:
 				anim.loop_mode = Animation.LOOP_LINEAR
-			ap.add_animation(mapped, anim)
+			dst.add_animation(mapped, anim)
 	inst.free()
 
 

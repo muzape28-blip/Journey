@@ -95,10 +95,12 @@ func _release_step(v: Vector2) -> void:
 
 
 func _draw() -> void:
+	# Ukuran live (layout mungkin belum final saat _ready).
+	var hc := Vector2(160.0, size.y - 200.0)
 	if _idx < 0:
 		# Cincin petunjuk idle — kawaii, tidak mengganggu.
-		draw_arc(hint_center, BASE_R, 0.0, TAU, 48, Color(1, 1, 1, HINT_ALPHA), 3.0)
-		draw_circle(hint_center, 6.0, Color(1, 1, 1, HINT_ALPHA * 0.8))
+		draw_arc(hc, BASE_R, 0.0, TAU, 48, Color(1, 1, 1, HINT_ALPHA), 3.0)
+		draw_circle(hc, 6.0, Color(1, 1, 1, HINT_ALPHA * 0.8))
 	else:
 		draw_circle(_origin, BASE_R, Color(1, 1, 1, 0.05))
 		draw_arc(_origin, BASE_R, 0.0, TAU, 64, Color(1, 1, 1, 0.28), 3.0)
