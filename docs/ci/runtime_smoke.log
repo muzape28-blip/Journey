@@ -1,45 +1,722 @@
 Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
 
-SCRIPT ERROR: Parse Error: Cannot find member "TYPE_VECTOR3" in base "Animation".
-          at: GDScript::reload (res://scripts/main.gd:113)
-ERROR: Failed to load script "res://scripts/main.gd" with error "Parse error".
-   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
-SCRIPT ERROR: Parse Error: The variable type is being inferred from a Variant value, so it will be typed as Variant. (Warning treated as error.)
-          at: GDScript::reload (res://scripts/floating_joystick.gd:66)
-SCRIPT ERROR: Parse Error: The variable type is being inferred from a Variant value, so it will be typed as Variant. (Warning treated as error.)
-          at: GDScript::reload (res://scripts/floating_joystick.gd:68)
-ERROR: Failed to load script "res://scripts/floating_joystick.gd" with error "Parse error".
-   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
-SCRIPT ERROR: Invalid call. Nonexistent function 'add_collision_exception_with' in base 'SpringArm3D'.
-          at: _ready (res://scripts/camera_rig.gd:25)
+CAMRIG-READY top_level=true
+JOYSTICK-READY size=(1600.0, 1600.0) hint=(160.0, 1400.0)
+BOOT-1 sun
+BOOT-2 world.build() mulai
+--Main Shader--
+    4 | 
+    5 | 
+E   6-> render_mode alpha_scissor(0.5), cull_disabled, specular_disabled;
+    7 | 
+    8 | uniform sampler2D albedo_tex : source_color, filter_linear_mipmap;
+SHADER ERROR: Invalid render mode: 'alpha_scissor'.
+          at: (null) (:6)
           GDScript backtrace (most recent call first):
-              [0] _ready (res://scripts/camera_rig.gd:25)
+              [0] _build_grass (res://scripts/world_builder.gd:84)
+              [1] build (res://scripts/world_builder.gd:24)
+              [2] _ready (res://scripts/main.gd:42)
+ERROR: Shader compilation failed.
+   at: shader_set_code (servers/rendering/dummy/storage/material_storage.cpp:192)
+   GDScript backtrace (most recent call first):
+       [0] _build_grass (res://scripts/world_builder.gd:84)
+       [1] build (res://scripts/world_builder.gd:24)
+       [2] _ready (res://scripts/main.gd:42)
+BOOT-3 world selesai
+BOOT-4 animplayer ketemu, sanitasi+merge
+SCRIPT ERROR: Invalid call. Nonexistent function 'add_animation' in base 'AnimationPlayer'.
+          at: _merge_v2 (res://scripts/main.gd:106)
+          GDScript backtrace (most recent call first):
+              [0] _merge_v2 (res://scripts/main.gd:106)
+              [1] _ready (res://scripts/main.gd:51)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] setup_player (res://scripts/player_controller.gd:42)
+         [2] _ready (res://scripts/main.gd:52)
+BOOT-5 anim: [&"Cute children female idle like nana from (e35b49)", &"Dodge Left Root Motion", &"Dodge Right Root Motion", &"Jog Forward", &"Sprint", &"Sprint Exit"]
+BOOT-6 hud terkabel
+BOOT-7 smoke timer jalan
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
 HUD-ALIVE: process jalan, joystick=true
-SCRIPT ERROR: Invalid access to property or key '_vec' on a base object of type 'Control'.
-          at: _process (res://scripts/hud.gd:68)
-          GDScript backtrace (most recent call first):
-              [0] _process (res://scripts/hud.gd:68)
-SCRIPT ERROR: Invalid access to property or key '_vec' on a base object of type 'Control'.
-          at: _process (res://scripts/hud.gd:68)
-          GDScript backtrace (most recent call first):
-              [0] _process (res://scripts/hud.gd:68)
-SCRIPT ERROR: Invalid access to property or key '_vec' on a base object of type 'Control'.
-          at: _process (res://scripts/hud.gd:68)
-          GDScript backtrace (most recent call first):
-              [0] _process (res://scripts/hud.gd:68)
-SCRIPT ERROR: Invalid access to property or key '_vec' on a base object of type 'Control'.
-          at: _process (res://scripts/hud.gd:68)
-          GDScript backtrace (most recent call first):
-              [0] _process (res://scripts/hud.gd:68)
-SCRIPT ERROR: Invalid access to property or key '_vec' on a base object of type 'Control'.
-          at: _process (res://scripts/hud.gd:68)
-          GDScript backtrace (most recent call first):
-              [0] _process (res://scripts/hud.gd:68)
-SCRIPT ERROR: Invalid access to property or key '_vec' on a base object of type 'Control'.
-          at: _process (res://scripts/hud.gd:68)
-          GDScript backtrace (most recent call first):
-              [0] _process (res://scripts/hud.gd:68)
-SCRIPT ERROR: Invalid access to property or key '_vec' on a base object of type 'Control'.
-          at: _process (res://scripts/hud.gd:68)
-          GDScript backtrace (most recent call first):
-              [0] _process (res://scripts/hud.gd:68)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+WARNING: E-strafe: animasi tidak ada: idle
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _play (res://scripts/player_controller.gd:108)
+         [1] _update_anim (res://scripts/player_controller.gd:101)
+         [2] _physics_process (res://scripts/player_controller.gd:87)
+ERROR: Pages in use exist at exit in PagedAllocator: N20RasterizerSceneDummy21GeometryInstanceDummyE
+   at: ~PagedAllocator (./core/templates/paged_allocator.h:170)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: 69 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 42 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)
+ERROR: 14 RID allocations of type 'N13RendererDummy15MaterialStorage13DummyMaterialE' were leaked at exit.
+ERROR: 2 RID allocations of type 'N13RendererDummy15MaterialStorage11DummyShaderE' were leaked at exit.
+ERROR: 14 RID allocations of type 'N13RendererDummy9DummyMeshE' were leaked at exit.
+ERROR: 6 RID allocations of type 'PN13RendererDummy14TextureStorage12DummyTextureE' were leaked at exit.
+ERROR: 14 RID allocations of type 'N17RendererSceneCull8InstanceE' were leaked at exit.
