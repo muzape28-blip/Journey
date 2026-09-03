@@ -12,10 +12,10 @@ extends Node3D
 ## melempar bayangan; fade jarak via sink lebih bersih daripada
 ## alpha-fade (tidak ada popping/flicker di scissor).
 
-const GROUND_SIZE := 60.0
-const GRASS_R12_COUNT := 600
-const GRASS_07C_COUNT := 150
-const GRASS_RADIUS := 26.0     # sebaran dalam disk sekitar spawn
+const GROUND_SIZE := 140.0     # S3: arena 60 → 140 m (keputusan user)
+const GRASS_R12_COUNT := 2000  # S3: 600 → 2000 (±2500 total, 2 draw call)
+const GRASS_07C_COUNT := 500   # S3: 150 → 500
+const GRASS_RADIUS := 66.0     # S3: disk sebaran mengikuti arena baru
 const SEED := 1337             # deterministik — UAT bisa mereproduksi
 
 
@@ -31,6 +31,9 @@ func build() -> void:
 		"res://assets/grass/rostlinka_07c_alfa.jpeg",
 		Vector2(1.4, 1.1), GRASS_07C_COUNT
 	)
+	_build_props()
+	print("WORLD-S3: arena=%dm grass=%d props+sky terpasang" % [
+		GROUND_SIZE, GRASS_R12_COUNT + GRASS_07C_COUNT])
 
 
 func _build_ground() -> void:
@@ -54,7 +57,7 @@ func _build_ground() -> void:
 		mat.ao_enabled = true
 		mat.ao_texture = occl
 	mat.roughness = 0.95
-	mat.uv1_scale = Vector3(10.0, 10.0, 1.0)   # tile ~6 m
+	mat.uv1_scale = Vector3(23.3, 23.3, 1.0)   # tile ~6 m di arena 140 m
 	mesh_inst.material_override = mat
 	mesh_inst.name = "Ground"
 	add_child(mesh_inst)
@@ -107,3 +110,78 @@ func _build_grass(albedo_path: String, alfa_path: String, card: Vector2, count: 
 	mmi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	mmi.name = "Grass_%s" % albedo_path.get_file().get_basename()
 	add_child(mmi)
+
+
+# ---- S3: props & skydome (harta karun user; diaudit biner 2026-09-03) ----
+# Hasil audit: rock_game_assets tinggi-Y 104 unit → skala 0.015–0.04;
+# pohon Retro GLB "tidur" (tinggi di −Z) → rotation.x +90° menegakkan;
+# geranium tinggi-Y 166 unit → skala 0.35–0.45; sky = bola radius 1 m
+# (doubleSided=true) → skala 300 + unlit.
+
+func _build_props() -> void:
+	var rng := RandomNumberGenerator.new()
+	rng.seed = SEED + 7
+	_scatter("res://assets/rocks/rock_game_assets.glb", 10, rng,
+			0.015, 0.04, 8.0, 62.0, 0.0, true)
+	_scatter("res://assets/trees/tree_rt_1.glb", 6, rng,
+			4.0, 6.0, 12.0, 64.0, 90.0, false)
+	_scatter("res://assets/trees/tree_rt_3.glb", 6, rng,
+			3.0, 5.0, 12.0, 64.0, 90.0, false)
+	_scatter("res://assets/trees/small_tree_rt_1.glb", 8, rng,
+			0.8, 1.4, 6.0, 60.0, 90.0, false)
+	# Geranium: 2 aksen kawaii dekat spawn saja (95k tris — jangan disebar!).
+	_place("res://assets/props/geranium_flower.glb",
+			Vector3(2.2, 0.0, 1.6), 0.4, 0.0, false)
+	_place("res://assets/props/geranium_flower.glb",
+			Vector3(-2.5, 0.0, 2.1), 0.35, 0.0, false)
+	_sky()
+
+
+func _scatter(path: String, count: int, rng: RandomNumberGenerator,
+		s_min: float, s_max: float, r_min: float, r_max: float,
+		tilt_x_deg: float, shadow: bool) -> void:
+	for i in count:
+		var ang := rng.randf() * TAU
+		var rad := rng.randf_range(r_min, r_max)
+		var pos := Vector3(cos(ang) * rad, 0.0, sin(ang) * rad)
+		_place(path, pos, rng.randf_range(s_min, s_max), tilt_x_deg, shadow,
+				rng.randf() * TAU)
+
+
+func _place(path: String, pos: Vector3, s: float, tilt_x_deg: float,
+		shadow: bool, yaw: float = 0.0) -> void:
+	var ps: PackedScene = load(path)
+	if ps == null:
+		push_warning("E-strafe: prop hilang: " + path)
+		return
+	var inst := ps.instantiate()
+	inst.position = pos
+	inst.scale = Vector3(s, s, s)
+	# Euler YXZ: tilt-X (menegakkan pohon) diterapkan dulu, baru yaw dunia.
+	inst.rotation = Vector3(deg_to_rad(tilt_x_deg), yaw, 0.0)
+	for mi in inst.find_children("*", "MeshInstance3D", true, false):
+		(mi as MeshInstance3D).cast_shadow = (
+			GeometryInstance3D.SHADOW_CASTING_SETTING_ON if shadow
+			else GeometryInstance3D.SHADOW_CASTING_SETTING_OFF)
+	inst.name = "Prop_" + path.get_file().get_basename()
+	add_child(inst)
+
+
+func _sky() -> void:
+	var ps: PackedScene = load("res://assets/sky/sky.glb")
+	if ps == null:
+		push_warning("E-strafe: sky.glb gagal load")
+		return
+	var inst := ps.instantiate()
+	inst.name = "SkyDome"
+	inst.scale = Vector3(300.0, 300.0, 300.0)  # radius asli 1 m
+	for mi in inst.find_children("*", "MeshInstance3D", true, false):
+		var m3 := mi as MeshInstance3D
+		m3.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		var mat := m3.mesh.surface_get_material(0)
+		if mat is StandardMaterial3D:
+			# Unlit biar dome tak di-shade matahari (setengah bola gelap).
+			# SHADING_MODE_UNLIT = 1 (Godot 4.3+); via set() biar compile aman.
+			mat.set("shading_mode", 1)
+	add_child(inst)
+	print("SKY-READY scale=300 unlit")

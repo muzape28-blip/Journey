@@ -11,7 +11,7 @@ extends Node3D
 
 @export var sens := 0.005          # rad per piksel drag
 @export var pitch_min_deg := -35.0
-@export var pitch_max_deg := 45.0
+@export var pitch_max_deg := 70.0  # S3: dongak sampai langit (user buru aset awan)
 @export var eye_height := 1.45     # tinggi mata di atas kaki player
 
 var yaw := 0.0
@@ -42,9 +42,10 @@ func on_touch_down(ev: InputEventScreenTouch) -> void:
 func on_drag(ev: InputEventScreenDrag) -> void:
 	if ev.index != _idx:
 		return
-	# Dunia ikut jari: drag kanan → yaw naik (kamera mengorbit kiri).
-	# Drag bawah → kamera mendongak. (Verifikasi rasa di UAT; balik tanda bila perlu.)
-	yaw += ev.relative.x * sens
+	# S3 (UAT user 2026-09-03): drag kanan = LIHAT kanan (tanda yaw dibalik;
+	# sebelumnya kamera malah mengorbit kiri — keluhan user).
+	# Drag atas → pitch naik → mendongak ke langit (dome sky.glb).
+	yaw -= ev.relative.x * sens
 	pitch = clamp(pitch - ev.relative.y * sens, deg_to_rad(pitch_min_deg), deg_to_rad(pitch_max_deg))
 
 

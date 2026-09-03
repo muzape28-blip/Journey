@@ -93,3 +93,9 @@ gratis) export Web/APK headless, artifact diunduh user di HP.
 - 2026-09-03: ORIENTASI DIPATENKAN LANDSCAPE (1600x720, orientation=0, fov 55).
   Keputusan user; riset mendukung (game aksi + virtual controller = landscape;
   portrait cocok casual/one-hand). Portrait ZDEV ternyata bukan patokan genre.
+- 2026-09-03 (S3): paket dunia+kontrol setelah approve user: yaw drag dibalik
+  (kanan=kanan), pitch max 70° (tatap langit), turn-to-move jog_fwd-only,
+  arena 140 m + rumput 2500, skydome sky.glb unlit, rock/geranium/pohon Retro
+  super-low. tree.glb (2712 mesh) & alaskan (1M tris) DILARANG — catat di
+  docs/harta_hp_gahar.md. Pelajaran audit: pohon Retro GLB "tidur" (tinggi di
+  −Z) → rotation.x +90°; Euler YXZ menegakkan dulu baru yaw.

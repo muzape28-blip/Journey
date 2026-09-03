@@ -40,6 +40,7 @@ environment = SubResource("env")
 [node name="Sun" type="DirectionalLight3D" parent="."]
 shadow_enabled = true
 directional_shadow_max_distance = 40.0
+light_energy = 0.8
 
 [node name="World" type="Node3D" parent="."]
 script = ExtResource("6_world")

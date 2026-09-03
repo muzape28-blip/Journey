@@ -56,6 +56,9 @@ func _ready() -> void:
 	hud.player = player
 	hud.joystick.moved.connect(player.set_move_input)
 	print("BOOT-6 hud terkabel")
+	_sky_dome = $World.get_node_or_null("SkyDome")
+	if _sky_dome == null:
+		push_warning("E-strafe: SkyDome tidak ditemukan")
 
 	$SmokeTimer.start()
 	print("BOOT-7 smoke timer jalan")
@@ -145,6 +148,16 @@ func _freeze_hips_xz(anim: Animation) -> void:
 		for k in kc:
 			var v: Vector3 = anim.track_get_key_value(t, k)
 			anim.track_set_key_value(t, k, Vector3(first.x, v.y, first.z))
+
+
+var _sky_dome: Node3D = null
+
+
+func _process(_delta: float) -> void:
+	# Dome harus selalu memusat ke player (radius 300 m; arena 140 m)
+	# supaya horizon tak pernah ketemu ujung bola.
+	if _sky_dome and player:
+		_sky_dome.global_position = player.global_position
 
 
 func _on_smoke_timer_timeout() -> void:
