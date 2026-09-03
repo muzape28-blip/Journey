@@ -4,6 +4,8 @@ CAMRIG-READY top_level=true
 JOYSTICK-READY size=(1600.0, 1600.0) hint=(160.0, 1400.0)
 BOOT-1 sun
 BOOT-2 world.build() mulai
+SKY-READY scale=300 unlit
+WORLD-S3: arena=140m grass=2500 props+sky terpasang
 BOOT-3 world selesai
 BOOT-4 animplayer ketemu, sanitasi+merge
 BOOT-5 anim: [&"dodge_l", &"dodge_r", &"idle", &"jog_fwd", &"jog_lean_r", &"jog_left", &"jog_right", &"sit_enter", &"sit_exit", &"sit_idle", &"sprint", &"sprint_exit"]
