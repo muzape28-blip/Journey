@@ -208,7 +208,9 @@ func _build_flower_cards() -> void:
 	mat.albedo_texture = tex
 	mat.cull_mode = BaseMaterial3D.CULL_DISABLED
 	# Scissor (bukan blend) — alasan sama seperti rumput: TBDR GE8320.
-	mat.alpha_scissor_enabled = true
+	# API 4.x yang BENAR (smoke S4 membuktikan alpha_scissor_enabled
+	# tidak ada di 4.7): enum transparency + threshold.
+	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR
 	mat.alpha_scissor_threshold = 0.45
 
 	var quad := QuadMesh.new()
